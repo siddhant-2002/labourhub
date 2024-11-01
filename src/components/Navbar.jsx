@@ -23,6 +23,8 @@ const Navbar = () => {
           <a href="#resources" className="text-white hover:text-gray-300">Resources</a>
           <a href="#faq" className="text-white hover:text-gray-300">FAQ</a>
           <a href="#contact" className="text-white hover:text-gray-300">Contact Us</a>
+          <a href="#login" className="text-white hover:text-gray-300">Login</a>
+
         </div>
         <div className="md:hidden">
           <button onClick={toggleMenu} className="text-white focus:outline-none">
