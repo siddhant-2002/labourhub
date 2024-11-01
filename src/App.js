@@ -1,11 +1,9 @@
 import "./App.css";
-import Home from "./components/Home.jsx";
+import Main from "./components/Main.jsx";
 function App() {
 	return (
 		<div className="App">
-			
-			<Home />
-			
+			<Main />
 		</div>
 	);
 }
