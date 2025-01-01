@@ -52,3 +52,23 @@
 .animate-scroll {
   animation: scroll 40s linear infinite;
 }
+.benefit-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.benefits-section h2 {
+  color: #2d3748; /* Tailwind's gray-800 */
+}
+
+.benefit-card h3 {
+  color: #1a202c; /* Tailwind's gray-900 */
+}
+
+.benefit-card ul {
+  color: #4a5568; /* Tailwind's gray-700 */
+}
