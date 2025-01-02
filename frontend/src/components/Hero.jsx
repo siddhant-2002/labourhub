@@ -1,7 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 // import { ArrowRight } from 'lucide-react';
 
 const Hero = () => {
+  // const navigate = useNavigate();
   return (
     <div className="relative min-h-screen pt-16 overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -36,8 +39,15 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Link to="/signup">
+              
+
+              <button className="btn-secondary">Find Jobs</button>
+            </Link>
+
+            <Link to="/signup">
             <button className="btn-primary">Find Workers</button>
-            <button className="btn-secondary">Find Jobs</button>
+            </Link>
           </div>
 
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">

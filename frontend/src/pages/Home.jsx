@@ -12,6 +12,7 @@ import Faq from "../components/Faq";
 import Loader from "../components/Loader";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Contactus from "../components/Contactus";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -45,6 +46,7 @@ const Home = () => {
                 <About />
                 <Video />
                 <Faq />
+                <Contactus />
                 <Footer />
               </div>
             }

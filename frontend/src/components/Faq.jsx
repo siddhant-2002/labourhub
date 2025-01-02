@@ -50,7 +50,7 @@ const Faq = () => {
               {faq.question}
             </div>
             {openIndex === index && (
-              <p className="text-lg text-gray-700">{faq.answer}</p>
+              <p className="text-lg text-gray-700 p-5">{faq.answer}</p>
             )}
           </div>
         ))}
