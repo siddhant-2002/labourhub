@@ -22,7 +22,7 @@ const ContactUs = () => {
     {
       icon: faEnvelope,
       title: "Email Address",
-      description: "laborsupport@gmail.com",
+      description: "labor@gmail.com",
     },
   ];
 
@@ -44,25 +44,23 @@ const ContactUs = () => {
             <h3 className="text-2xl font-semibold mb-4 text-blue-500">
               Contact Details
             </h3>
-            <div className="grid gap-4">
-
-            
-            {contactInfo.map((info, index) => (
-              <div className="p-4  bg-white border border-gray-200 rounded-lg">
-                <div key={index} className="mb-2 flex items-start gap-4">
-                  <FontAwesomeIcon
-                    icon={info.icon}
-                    className="text-blue-500 text-3xl"
-                  />
-                  <div>
-                    <p className="text-lg font-medium">
-                      {info.title}:{" "}
-                      <span className="font-normal">{info.description}</span>
-                    </p>
+            <div className="flex gap-4 flex-col">
+              {contactInfo.map((info, index) => (
+                <div className="p-4  bg-white border border-gray-200 rounded-lg ">
+                  <div key={index} className="mb-2 flex items-start gap-4">
+                    <FontAwesomeIcon
+                      icon={info.icon}
+                      className="text-blue-500 "
+                    />
+                    <div>
+                      <p className="text-lg font-medium">
+                        {info.title}:{" "}
+                        <span className="font-normal flex flex-wrap">{info.description}</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
             </div>
           </div>
           {/* Contact Form */}
