@@ -5,12 +5,13 @@ import { Mail, Lock, ArrowRight } from 'lucide-react';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle login logic here
-    console.log('Login:', { email, password });
+    console.log('Login:', { email, password, userType });
     // Redirect to dashboard after successful login
     navigate('/dashboard');
   };
@@ -68,6 +69,27 @@ const Login = () => {
                 />
               </div>
             </div>
+
+            <div>
+              <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1">
+                Login As
+              </label>
+              <div className="relative">
+                <select
+                  id="userType"
+                  name="userType"
+                  required
+                  value={userType}
+                  onChange={(e) => setUserType(e.target.value)}
+                  className="appearance-none block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg
+                           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                >
+                  <option value="" disabled>Select an option</option>
+                  <option value="jobProvider">Job Provider</option>
+                  <option value="worker">Worker</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center justify-between">
@@ -84,7 +106,7 @@ const Login = () => {
             </div>
 
             <div className="text-sm">
-              <Link href="#" className="font-medium text-primary-600 hover:text-primary-500">
+              <Link to="#" className="font-medium text-primary-600 hover:text-primary-500">
                 Forgot password?
               </Link>
             </div>
