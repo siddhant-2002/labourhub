@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Flex from "../components/Flex";
-import About from "../components/About";
+import Mission from "../components/Mission";
 import Video from "../components/Video";
 import Faq from "../components/Faq";
 import Contactus from "../components/Contactus";
@@ -11,6 +11,7 @@ import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 import RecommendedJobs from "../pages/dashboard/RecommendedJobs";
 import Loader from "../components/Loader";
+import Aboutus from "../pages/about/Aboutus";
 
 // import WorkerProfile from "./profiles/WorkerProfile";
 // import ProvoiderProfile from "./profiles/ProvoiderProfile";
@@ -46,7 +47,7 @@ const Home = () => {
                 <Header />
                 <Hero />
                 <Flex />
-                <About />
+                <Mission />
                 <Video />
                 <Faq />
                 <Contactus />
@@ -62,6 +63,16 @@ const Home = () => {
               <>
                 <Header />
                 <RecommendedJobs />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <>
+                <Header />
+                <Aboutus />
                 <Footer />
               </>
             }

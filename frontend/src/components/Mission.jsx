@@ -81,14 +81,18 @@ const About = () => {
         </div>
       </div>
 
-            <div className="benefits-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-12">
+      <div className="benefits-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-12">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-8">
           Benefits for Everyone
         </h2>
         <div className="flex flex-col md:flex-row gap-8">
           <div className="benefit-card flex-1 p-6 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-2">
             <div className="flex items-center mb-4">
-              <svg className="w-8 h-8 text-blue-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                className="w-8 h-8 text-blue-500 mr-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
               </svg>
               <h3 className="text-2xl font-semibold text-gray-900">
@@ -103,7 +107,11 @@ const About = () => {
           </div>
           <div className="benefit-card flex-1 p-6 bg-gradient-to-r from-green-100 to-green-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-2">
             <div className="flex items-center mb-4">
-              <svg className="w-8 h-8 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                className="w-8 h-8 text-green-500 mr-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
               </svg>
               <h3 className="text-2xl font-semibold text-gray-900">
