@@ -44,8 +44,7 @@ const Home = () => {
             path="/"
             element={
               <div className="min-h-screen bg-white">
-                <Header />
-                <Hero />
+                 <Hero />
                 <Flex />
                 <Mission />
                 <Video />

@@ -1,56 +1,31 @@
 const mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const { route } = require('../routes/labour');
 
-const userSchema= new mongoose.Schema({
-  companyName: {
+const userSchema = new mongoose.Schema({
+  name: {
     type: String,
     required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
   },
   phone: {
     type: String,
     required: true,
   },
-  location: {
+  email: {
+    type: String,
+    required: false,
+  },
+  password: {
     type: String,
     required: true,
   },
-  logo: {
+  role: {
     type: String,
+    enum:['labour', 'jobProvider'],
+    required: true,
   },
-  jobListings: [
-    {
-      title: {
-        type: String,
-        required: true,
-      },
-      description: {
-        type: String,
-        required: true,
-      },
-      requirements: {
-        type: [String],
-        required: true,
-      },
-      salary: {
-        type: Number,
-        required: true,
-      },
-      location: {
-        type: String,
-        required: true,
-      },
-      datePosted: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
 });
 
-const user = mongoose.model('user', userSchema);
+const User = mongoose.model('User', userSchema);
 
-module.exports = user;
+module.exports = User;
