@@ -1,19 +1,38 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Phone, Lock, ArrowRight } from 'lucide-react';
+import axios from 'axios';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login:', { email, password, userType });
-    // Redirect to dashboard after successful login
-    navigate('/dashboard');
+    try {
+      const response = await axios.post('http://localhost:3000/login', {
+        phone,
+        password,
+      });
+      // console.log('Login successful:', response.data);
+      // window.location.reload();
+
+      // Store token in sessionStorage or localStorage based on rememberMe
+      if (rememberMe) {
+        localStorage.setItem('token', response.data.token);
+      } else {
+        sessionStorage.setItem('token', response.data.token);
+      }
+
+      // Redirect to dashboard after successful login
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Invalid phone number or password. Please try again.');
+    }
   };
 
   return (
@@ -27,23 +46,23 @@ const Login = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Phone className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
+                  id="phone"
+                  name="phone"
+                  type="tel"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="Enter your email"
+                  placeholder="Enter your phone number"
                 />
               </div>
             </div>
@@ -69,27 +88,6 @@ const Login = () => {
                 />
               </div>
             </div>
-
-            <div>
-              <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1">
-                Login As
-              </label>
-              <div className="relative">
-                <select
-                  id="userType"
-                  name="userType"
-                  required
-                  value={userType}
-                  onChange={(e) => setUserType(e.target.value)}
-                  className="appearance-none block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  <option value="" disabled>Select an option</option>
-                  <option value="jobProvider">Job Provider</option>
-                  <option value="worker">Worker</option>
-                </select>
-              </div>
-            </div>
           </div>
 
           <div className="flex items-center justify-between">
@@ -98,6 +96,8 @@ const Login = () => {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
@@ -122,6 +122,12 @@ const Login = () => {
             Sign in
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
           </button>
+
+          {error && (
+            <div className="mt-4 p-4 bg-red-100 text-red-800 rounded-lg">
+              {error}
+            </div>
+          )}
 
           <div className="text-center">
             <p className="text-sm text-gray-600">

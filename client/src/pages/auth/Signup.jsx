@@ -1,25 +1,42 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Lock, User, Phone, ArrowRight } from "lucide-react";
+import axios from "axios";
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [credentials, setCredentials] = useState({
+    name: "",
+    password: "",
+    phone: "", // Corrected capitalization
+    role: "",
+    // gender: ""
+  });
 
-  const [workType, setWorkType] = useState("");
-  const [gender, setGender] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle signup logic here
-    console.log("Signup:", {
-      name,
-      password,
-      mobile,
-      workType,
-      gender,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials({
+      ...credentials,
+      [name]: value,
     });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Replace with your signup API endpoint
+      const response = await axios.post(
+        "http://localhost:3000/signup",
+        credentials
+      );
+      console.log(response);
+      navigate("/login");
+      // window.location.reload();
+    } catch (err) {
+      console.log(err);
+      
+    }
   };
 
   return (
@@ -52,8 +69,8 @@ const Signup = () => {
                   name="name"
                   type="text"
                   required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={credentials.name}
+                  onChange={handleChange}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   placeholder="Enter your full name"
@@ -63,7 +80,7 @@ const Signup = () => {
 
             <div>
               <label
-                htmlFor="mobile"
+                htmlFor="phone" // Corrected htmlFor attribute
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Mobile Number
@@ -73,12 +90,12 @@ const Signup = () => {
                   <Phone className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="mobile"
-                  name="mobile"
+                  id="phone"
+                  name="phone" // Corrected name attribute
                   type="tel"
                   required
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
+                  value={credentials.phone}
+                  onChange={handleChange}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   placeholder="Enter your mobile number"
@@ -102,8 +119,8 @@ const Signup = () => {
                   name="password"
                   type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={credentials.password}
+                  onChange={handleChange}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   placeholder="Choose a password"
@@ -120,11 +137,11 @@ const Signup = () => {
               </label>
               <div className="relative">
                 <select
-                  id="workType"
-                  name="workType"
+                  id="role"
+                  name="role"
                   required
-                  value={workType}
-                  onChange={(e) => setWorkType(e.target.value)}
+                  value={credentials.role}
+                  onChange={handleChange}
                   className="appearance-none block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 >
@@ -137,7 +154,7 @@ const Signup = () => {
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <label
                 htmlFor="gender"
                 className="block text-sm font-medium text-gray-700 mb-1"
@@ -149,8 +166,8 @@ const Signup = () => {
                   id="gender"
                   name="gender"
                   required
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
+                  value={credentials.gender}
+                  onChange={handleChange}
                   className="appearance-none block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 >
@@ -162,7 +179,7 @@ const Signup = () => {
                   <option value="other">Other</option>
                 </select>
               </div>
-            </div>
+            </div>*/}
           </div>
 
           <div className="flex items-center">
@@ -191,7 +208,6 @@ const Signup = () => {
             </label>
           </div>
 
-        <Link to="/login">
           <button
             type="submit"
             className="group relative w-full flex justify-center py-3 px-4 border border-transparent 
@@ -202,7 +218,6 @@ const Signup = () => {
             Create Account
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
           </button>
-        </Link>
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}

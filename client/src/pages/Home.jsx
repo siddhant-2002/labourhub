@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Flex from "../components/Flex";
@@ -7,19 +8,28 @@ import Video from "../components/Video";
 import Faq from "../components/Faq";
 import Contactus from "../components/Contactus";
 import Footer from "../components/Footer";
-import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
-import RecommendedJobs from "../pages/dashboard/RecommendedJobs";
+import Login from "./auth/Login";
+import Signup from "./auth/Signup";
+import RecommendedJobs from "./dashboard/RecommendedJobs";
 import Loader from "../components/Loader";
-import Aboutus from "../pages/about/Aboutus";
+import Aboutus from "./about/Aboutus";
+import WorkerProfile from "./profiles/WorkerProfile";
+import ProvoiderProfile from "./profiles/ProvoiderProfile";
 
-// import WorkerProfile from "./profiles/WorkerProfile";
-// import ProvoiderProfile from "./profiles/ProvoiderProfile";
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
+
+  const token = sessionStorage.getItem("token");
+  const isLoggedIn = token ? true : false;
+
+  let user = null;
+  if (token) {
+    user = jwtDecode(token);
+  }
+
+  console.log(user);
 
   useEffect(() => {
     // Simulate a loading delay
@@ -35,48 +45,33 @@ const Home = () => {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <Router>
+        <Header isLoggedIn={isLoggedIn} user={user} />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route
             path="/"
             element={
-              <div className="min-h-screen bg-white">
-                 <Hero />
+              <>
+                <Hero isLoggedIn={isLoggedIn} />
                 <Flex />
                 <Mission />
                 <Video />
                 <Faq />
                 <Contactus />
-                {/* <WorkerProfile />
-                <ProvoiderProfile /> */}
-                <Footer />
-              </div>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <>
-                <Header />
-                <RecommendedJobs />
-                <Footer />
+                <WorkerProfile />
+                <ProvoiderProfile />
               </>
             }
           />
-          <Route
-            path="/about"
-            element={
-              <>
-                <Header />
-                <Aboutus />
-                <Footer />
-              </>
-            }
-          />
+          <Route path="/workerprofile" element={<WorkerProfile />} />
+          <Route path="/provoiderprofile" element={<ProvoiderProfile />} />
+          <Route path="/dashboard" element={<RecommendedJobs />} />
+          <Route path="/about" element={<Aboutus />} />
         </Routes>
+        <Footer />
       </Router>
     </div>
   );

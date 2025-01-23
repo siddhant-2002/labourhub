@@ -1,5 +1,7 @@
 import React from 'react';
 import { MapPin, Clock, DollarSign } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const JobCard = ({
   title,
@@ -11,6 +13,14 @@ const JobCard = ({
   description,
   imageUrl,
 }) => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    // Logic to apply for the job goes here
+
+    // Show toaster notification
+    toast.success('Applied for job successfully');
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
       <div className="relative h-48">
@@ -46,7 +56,10 @@ const JobCard = ({
         <p className="text-gray-600 mb-6 line-clamp-2">{description}</p>
         
         <div className="flex justify-between items-center">
-          <button className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200">
+          <button
+            onClick={handleClick}
+            className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
+          >
             Apply Now
           </button>
           <button className="text-primary-600 hover:text-primary-700 font-medium">
@@ -54,6 +67,7 @@ const JobCard = ({
           </button>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

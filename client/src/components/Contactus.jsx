@@ -6,20 +6,23 @@ import {
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 
-const ContactUs = () => {
+const Contactus = () => {
   const [formStatus, setFormStatus] = useState("");
   const contactInfo = [
     {
+      index: 1,
       icon: faMapMarkerAlt,
       title: "Location",
       description: "vadgaon, Pune, Maharashtra, India",
     },
     {
+      index: 3,
       icon: faPhoneAlt,
       title: "Phone Number",
       description: "+91 1234567890",
     },
     {
+      index: 2,
       icon: faEnvelope,
       title: "Email Address",
       description: "labor@gmail.com",
@@ -45,17 +48,19 @@ const ContactUs = () => {
               Contact Details
             </h3>
             <div className="flex gap-4 flex-col">
-              {contactInfo.map((info, index) => (
-                <div className="p-4  bg-white border border-gray-200 rounded-lg ">
-                  <div key={index} className="mb-2 flex items-start gap-4">
+              {contactInfo.map((info) => (
+                <div key={info.index} className="p-4 bg-white border border-gray-200 rounded-lg">
+                  <div className="mb-2 flex items-start gap-4">
                     <FontAwesomeIcon
                       icon={info.icon}
-                      className="text-blue-500 "
+                      className="text-blue-500"
                     />
                     <div>
                       <p className="text-lg font-medium">
                         {info.title}:{" "}
-                        <span className="font-normal flex flex-wrap">{info.description}</span>
+                        <span className="font-normal flex flex-wrap">
+                          {info.description}
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -152,4 +157,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default Contactus;

@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const mongoose = require('mongoose');
-const { route } = require('../routes/labour');
+const mongoose = require("mongoose");
+const { route } = require("../routes/labour");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -21,11 +20,11 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum:['labour', 'jobProvider'],
+    enum: ["worker", "jobProvider"],
     required: true,
   },
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
