@@ -39,9 +39,9 @@ const Header = ({ isLoggedIn,user }) => {
               <span>Language</span>
             </div>
             {isLoggedIn ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 cursor-pointer" onClick={()=>profileHandler()} >
                 <img src={user.avatar} alt="Profile" className="w-10 h-10 rounded-full" />
-                <span className="text-gray-700">{user.name}</span>
+                {/* <span className="text-gray-700">{user.name}</span> */}
               </div>
             ) : (
               <button
@@ -90,8 +90,8 @@ const Header = ({ isLoggedIn,user }) => {
               <span>Language</span>
             </div>
             {isLoggedIn ? (
-              <div className="flex items-center space-x-4 px-3 py-2">
-                <img src={user.avatar} alt="Profile" onClick={()=>profileHandler()} className="w-10 h-10 rounded-full" />
+              <div onClick={()=>profileHandler()} className="flex items-center space-x-4 px-3 py-2 hover cursor-pointer">
+                <img src={user.avatar} alt="Profile"  className="w-10 h-10 rounded-full" />
                 {/* <span className="text-gray-700">{user.name}</span> */}
               </div>
             ) : (
