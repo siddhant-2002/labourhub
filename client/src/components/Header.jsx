@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ProfileDropdown from "./ProfileDropdown";
+// import {profile} from "../public/profile.jpg";
 
 const Header = ({ isLoggedIn,user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  function profileHandler(){
-    if(user.role === "labour"){
-      navigate("/userprofile");
-    }
-    else{
-      navigate("/provoiderprofile");
-    }
-  }
+  // function profileHandler(){
+  //   if(user.role === "labour"){
+  //     navigate("/userprofile");
+  //   }
+  //   else{
+  //     navigate("/provoiderprofile");
+  //   }
+  // }
 
   return (
     <nav className="bg-white shadow-sm fixed w-full z-50">
@@ -39,9 +41,12 @@ const Header = ({ isLoggedIn,user }) => {
               <span>Language</span>
             </div>
             {isLoggedIn ? (
-              <div className="flex items-center space-x-4 cursor-pointer" onClick={()=>profileHandler()} >
-                <img src={user.avatar} alt="Profile" className="w-10 h-10 rounded-full" />
-                {/* <span className="text-gray-700">{user.name}</span> */}
+              // <div className="flex items-center space-x-4 cursor-pointer" onClick={()=>profileHandler()} >
+              //   <img src="/profile.jpg" alt="Profile" className="w-10 h-10 rounded-full" />
+              //   {/* <span className="text-gray-700">{user.name}</span> */}
+              // </div>
+              <div>
+                <ProfileDropdown user={user} />
               </div>
             ) : (
               <button
@@ -90,9 +95,12 @@ const Header = ({ isLoggedIn,user }) => {
               <span>Language</span>
             </div>
             {isLoggedIn ? (
-              <div onClick={()=>profileHandler()} className="flex items-center space-x-4 px-3 py-2 hover cursor-pointer">
-                <img src={user.avatar} alt="Profile"  className="w-10 h-10 rounded-full" />
-                {/* <span className="text-gray-700">{user.name}</span> */}
+              // <div onClick={()=>profileHandler()} className="flex items-center space-x-4 px-3 py-2 hover cursor-pointer">
+              //   <img src="/profile.jpg" alt="Profile"  className="w-10 h-10 rounded-full" />
+              //   {/* <span className="text-gray-700">{user.name}</span> */}
+              // </div>
+              <div>
+                <ProfileDropdown />
               </div>
             ) : (
               <button

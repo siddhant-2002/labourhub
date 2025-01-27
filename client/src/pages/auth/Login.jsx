@@ -18,7 +18,7 @@ const Login = () => {
         password,
       });
       // console.log('Login successful:', response.data);
-      // window.location.reload();
+      
 
       // Store token in sessionStorage or localStorage based on rememberMe
       if (rememberMe) {
@@ -28,7 +28,18 @@ const Login = () => {
       }
 
       // Redirect to dashboard after successful login
-      navigate('/dashboard');
+      // window.location.reload();
+
+      // if(response.data.user.role === "labour"){
+      //   navigate('/dashboard');
+      // }
+      // else{ 
+      //   navigate('/jobprovoider');
+      // }
+      navigate('/');
+      window.location.reload();
+     
+      
     } catch (err) {
       console.error('Login error:', err);
       setError('Invalid phone number or password. Please try again.');

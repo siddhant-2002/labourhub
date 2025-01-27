@@ -98,20 +98,7 @@ const ProviderProfile = () => {
             </div>
           </div>
 
-          {/* Job Listings */}
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md w-full">
-            <h3 className="text-2xl font-semibold mb-4 text-blue-500">Job Listings</h3>
-            <div className="space-y-4">
-              {profile.jobListings.map((job, index) => (
-                <div key={index} className="p-4 bg-white border border-gray-200 rounded-lg">
-                  <h4 className="text-xl font-semibold text-gray-900">{job.title}</h4>
-                  <p className="text-gray-700">Location: {job.location}</p>
-                  <p className="text-gray-700">Experience: {job.experience}</p>
-                  <p className="text-gray-700">Salary: {job.salary}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+      
         </div>
       </div>
     </div>

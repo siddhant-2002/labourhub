@@ -17,6 +17,8 @@ import WorkerProfile from "./profiles/WorkerProfile";
 import ProvoiderProfile from "./profiles/ProvoiderProfile";
 
 import { jwtDecode } from "jwt-decode";
+import JobProvider from "./dashboard/JobProvoider";
+// import ProfileDropdown from "../components/ProfileDropdown";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ const Home = () => {
     user = jwtDecode(token);
   }
 
-  console.log(user);
+  // console.log(user);
 
   useEffect(() => {
     // Simulate a loading delay
@@ -61,14 +63,15 @@ const Home = () => {
                 <Video />
                 <Faq />
                 <Contactus />
-                <WorkerProfile />
-                <ProvoiderProfile />
+                {/* <JobProvider />
+                <ProfileDropdown /> */}
               </>
             }
           />
           <Route path="/workerprofile" element={<WorkerProfile />} />
           <Route path="/provoiderprofile" element={<ProvoiderProfile />} />
           <Route path="/dashboard" element={<RecommendedJobs />} />
+          <Route path="/jobprovoider" element={<JobProvider />} />
           <Route path="/about" element={<Aboutus />} />
         </Routes>
         <Footer />
