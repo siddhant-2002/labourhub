@@ -1,79 +1,77 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-// import { ArrowRight } from 'lucide-react';
-
 const Hero = (props) => {
-  // const navigate = useNavigate();
   const isLoggedIn = props;
 
   return (
-    <div className="relative min-h-screen pt-16 overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80"
-          alt="Workers collaborating"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/95 via-primary-800/90 to-primary-700/85"></div>
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-10">
-        <div className="text-center">
+        <section className="relative pt-24 sm:pt-28 lg:pt-32 xl:pb-0">
+      
+      <div className="relative px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+        <div className="max-w-3xl mx-auto text-center">
           <div className="inline-block animate-float">
-            <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm text-white mb-8">
+            <p className="inline-flex px-4 py-2 text-base text-white border border-gray-200 rounded-full backdrop-blur-sm font-pj bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
               🚀 Transforming the Future of Work
-              {/* <ArrowRight className="ml-2 w-4 h-4" /> */}
-            </span>
+            </p>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            Connecting Workers with
-            <br className="hidden md:block" />
-            <span className="bg-gradient-to-r from-accent-300 to-accent-400 text-transparent bg-clip-text">
-              Meaningful Opportunities
-            </span>
+          <h1 className="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">
+            Connecting Workers with Meaningful Opportunities
           </h1>
-
-          <p className="text-xl text-primary-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="max-w-md mx-auto mt-6 text-base leading-7 text-gray-600 font-inter">
             Find reliable workers or discover job opportunities in your area.
             LabourHub makes connections simple, secure, and efficient.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <div className="relative inline-flex mt-10 group">
+            <div className="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
+
             {isLoggedIn ? (
               <Link to="/dashboard">
-                <button className="btn-secondary">Find Jobs</button>
+                <button className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                  Find Jobs
+                </button>
               </Link>
             ) : (
               <Link to="/signup">
-                <button className="btn-secondary">Find Jobs</button>
+                <button className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                  Find Jobs
+                </button>
               </Link>
             )}
-
-            {/* <Link to="/signup">
-            <button className="btn-primary">Find Workers</button>
-            </Link> */}
-          </div>
-
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
-            {[
-              ["10K+", "Active Workers"],
-              ["5K+", "Businesses"],
-              ["95%", "Success Rate"],
-              ["24/7", "Support"],
-            ].map(([stat, label]) => (
-              <div key={label} className="text-center">
-                <div className="text-3xl font-bold text-white mb-1">{stat}</div>
-                <div className="text-primary-200 text-sm">{label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
-    </div>
+      <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
+        {[
+          ["10K+", "Active Workers"],
+          ["5K+", "Businesses"],
+          ["95%", "Success Rate"],
+          ["24/7", "Support"],
+        ].map(([stat, label]) => (
+          <div key={label} className="text-center">
+            <div className="text-3xl font-bold text-black mb-1">{stat}</div>
+            <div className="text-black text-sm">{label}</div>
+          </div>
+        ))}
+      </div>
+      <div className="absolute bottom-48 right-0 overflow-hidden">
+        <img
+          className="w-full h-auto origin-bottom-right transform scale-150 lg:w-auto lg:mx-auto lg:object-cover lg:scale-75"
+          src="https://cdn.rareblocks.xyz/collection/clarity/images/hero/1/background-pattern.png"
+          alt=""
+        />
+      </div>
+
+      <div className="mt-16 md:mt-20">
+        <img
+          className="object-cover object-center w-full h-auto mx-auto md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl"
+          src="https://d33wubrfki0l68.cloudfront.net/54780decfb9574945bc873b582cdc6156144a2ba/d9fa1/images/hero/4/illustration.png"
+          alt="Hero Illustration"
+        />
+      </div>
+    </section>
   );
 };
 

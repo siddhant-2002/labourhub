@@ -1,17 +1,24 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const Loader = () => {
   return (
     <StyledWrapper>
-      <div className="three-body">
-        <div className="three-body__dot" />
-        <div className="three-body__dot" />
-        <div className="three-body__dot" />
+      <div className="items-center text-center mb-16">
+        <span className="relative inline-flex sm:inline">
+          <span className="bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg filter opacity-30 w-full h-full absolute inset-0"></span>
+          <span className="relative mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj text-center">
+            <div className="three-body">
+              <div className="three-body__dot" />
+              <div className="three-body__dot" />
+              <div className="three-body__dot" />
+            </div>
+          </span>
+        </span>
       </div>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -23,7 +30,7 @@ const StyledWrapper = styled.div`
   .three-body {
     --uib-size: 35px;
     --uib-speed: 0.8s;
-    --uib-color: #5D3FD3;
+    --uib-color: #000000; /* Changed color to black */
     position: relative;
     display: inline-block;
     height: var(--uib-size);
@@ -38,7 +45,7 @@ const StyledWrapper = styled.div`
   }
 
   .three-body__dot:after {
-    content: '';
+    content: "";
     position: absolute;
     height: 0%;
     width: 100%;
@@ -71,8 +78,8 @@ const StyledWrapper = styled.div`
   .three-body__dot:nth-child(2)::after {
     bottom: 0;
     left: 0;
-    animation: wobble1 var(--uib-speed) infinite
-      calc(var(--uib-speed) * -0.15) ease-in-out;
+    animation: wobble1 var(--uib-speed) infinite calc(var(--uib-speed) * -0.15)
+      ease-in-out;
   }
 
   .three-body__dot:nth-child(3) {

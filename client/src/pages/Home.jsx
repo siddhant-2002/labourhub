@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Flex from "../components/Flex";
-import Mission from "../components/Mission";
 import Video from "../components/Video";
 import Faq from "../components/Faq";
 import Contactus from "../components/Contactus";
@@ -15,6 +14,7 @@ import Loader from "../components/Loader";
 import Aboutus from "./about/Aboutus";
 import WorkerProfile from "./profiles/WorkerProfile";
 import ProvoiderProfile from "./profiles/ProvoiderProfile";
+import Features from "./features/Features";
 
 import { jwtDecode } from "jwt-decode";
 import JobProvider from "./dashboard/JobProvoider";
@@ -59,7 +59,6 @@ const Home = () => {
               <>
                 <Hero isLoggedIn={isLoggedIn} />
                 <Flex />
-                <Mission />
                 <Video />
                 <Faq />
                 <Contactus />
@@ -73,6 +72,7 @@ const Home = () => {
           <Route path="/dashboard" element={<RecommendedJobs />} />
           <Route path="/jobprovoider" element={<JobProvider />} />
           <Route path="/about" element={<Aboutus />} />
+          <Route path="/features" element={<Features />} />
         </Routes>
         <Footer />
       </Router>
