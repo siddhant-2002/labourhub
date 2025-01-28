@@ -72,7 +72,7 @@ const Home = () => {
           <Route path="/dashboard" element={<RecommendedJobs />} />
           <Route path="/jobprovoider" element={<JobProvider />} />
           <Route path="/about" element={<Aboutus />} />
-          <Route path="/features" element={<Features />}/>
+          <Route path="/features" element={<Features />} />
         </Routes>
         <Footer />
       </Router>

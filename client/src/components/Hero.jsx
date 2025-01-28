@@ -5,13 +5,14 @@ const Hero = (props) => {
   const isLoggedIn = props;
 
   return (
-    <section className="relative py-6 sm:py-16 lg:pt-15 xl:pb-0">
+        <section className="relative pt-24 sm:pt-28 lg:pt-32 xl:pb-0">
+      
       <div className="relative px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-block animate-float">
-          <p className="inline-flex px-4 py-2 text-base text-white border border-gray-200 rounded-full backdrop-blur-sm font-pj bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-            🚀 Transforming the Future of Work
-          </p>
+            <p className="inline-flex px-4 py-2 text-base text-white border border-gray-200 rounded-full backdrop-blur-sm font-pj bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+              🚀 Transforming the Future of Work
+            </p>
           </div>
 
           <h1 className="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">
@@ -55,14 +56,21 @@ const Hero = (props) => {
           </div>
         ))}
       </div>
-
-      {/* <div className="mt-16 md:mt-20">
+      <div className="absolute bottom-48 right-0 overflow-hidden">
         <img
-          className="object-cover object-top w-full h-auto mx-auto scale-150 2xl:max-w-screen-2xl xl:scale-100"
+          className="w-full h-auto origin-bottom-right transform scale-150 lg:w-auto lg:mx-auto lg:object-cover lg:scale-75"
+          src="https://cdn.rareblocks.xyz/collection/clarity/images/hero/1/background-pattern.png"
+          alt=""
+        />
+      </div>
+
+      <div className="mt-16 md:mt-20">
+        <img
+          className="object-cover object-center w-full h-auto mx-auto md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl"
           src="https://d33wubrfki0l68.cloudfront.net/54780decfb9574945bc873b582cdc6156144a2ba/d9fa1/images/hero/4/illustration.png"
           alt="Hero Illustration"
         />
-      </div> */}
+      </div>
     </section>
   );
 };

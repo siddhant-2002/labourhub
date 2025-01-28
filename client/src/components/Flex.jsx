@@ -51,7 +51,7 @@ const Flex = () => {
   ];
 
   return (
-    <div className="py-24 relative overflow-hidden bg-white">
+    <div className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="h-full "></div>
       </div>

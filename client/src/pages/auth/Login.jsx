@@ -33,24 +33,18 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-gradient-to-r from-[#A3DFFF] via-[#FFB3F0] to-[#FFB3B3] p-8 rounded-2xl shadow-xl">
-        <div className="text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome Back
-          </h2>
-          <p className="text-gray-600">
-            Enter your credentials to access your account
-          </p>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-md w-full bg-white space-y-8 p-8 rounded-2xl shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#A3DFFF] via-[#FFB3F0] to-[#FFB3B3] blur-lg filter opacity-30 rounded-2xl"></div>
+        <div className="relative z-10 text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+          <p className="text-gray-600">Enter your credentials to access your account</p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="relative z-10 mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-black mb-1"
-              >
+              <label htmlFor="phone" className="block text-sm font-medium text-black mb-1">
                 Phone Number
               </label>
               <div className="relative">
@@ -71,10 +65,7 @@ const Login = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-black mb-1"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-black mb-1">
                 Password
               </label>
               <div className="relative">
@@ -105,26 +96,20 @@ const Login = () => {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-[#44BCFF] focus:ring-[#44BCFF] border-gray-300 rounded"
               />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-700"
-              >
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                 Remember me
               </label>
             </div>
 
             <div className="text-sm">
-              <Link
-                to="#"
-                className="font-medium text-[#0e2b3a] hover:text-[#2f1f57]"
-              >
+              <Link to="#" className="font-medium text-[#297195] hover:text-[#2f1f57]">
                 Forgot password?
               </Link>
             </div>
           </div>
 
           <div className="w-full relative inline-flex mt-5 group">
-            <div className="w-full absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
+            <div className="w-full absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#A3DFFF] via-[#FFB3F0] to-[#FFB3B3] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
 
             <button
               type="submit"
@@ -144,10 +129,7 @@ const Login = () => {
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link
-                to="/signup"
-                className="font-medium text-[#0e2b3a] hover:text-[#2f1f57]"
-              >
+              <Link to="/signup" className="font-medium text-[#30779b] hover:text-[#2f1f57]">
                 Sign up here
               </Link>
             </p>
