@@ -60,7 +60,7 @@ const Flex = () => {
         <div className="text-center mb-16">
           <span className="relative inline-flex sm:inline">
             <span className="bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg filter opacity-30 w-full h-full absolute inset-0"></span>
-            <span className="relative mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">
+            <span className="relative mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-4xl sm:leading-tight lg:text-4xl lg:leading-tight font-pj">
               Everything You Need to Succeed
             </span>
           </span>
@@ -70,28 +70,28 @@ const Flex = () => {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-8 bg-white bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-2xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+              className="group relative p-6 bg-white bg-opacity-95 backdrop-blur-xl rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1"
             >
               {/* Light gradient background */}
               <div
-                className={`absolute inset-0 bg-gradient-to-r ${feature.gradient}  group-hover:opacity-60 transition-opacity duration-500 rounded-2xl`}
+                className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-50 group-hover:opacity-70 transition-all duration-500 rounded-3xl`}
               ></div>
 
               {/* Content */}
               <div className="relative z-10">
                 <div className="flex items-center mb-6 space-x-4">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-black shadow-lg">
+                  <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-black/90 shadow-lg transform transition-transform group-hover:scale-110">
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-black">
+                  <h3 className="text-lg font-semibold text-gray-900">
                     {feature.title}
                   </h3>
                 </div>
-                <p className="text-black">{feature.description}</p>
+                <p className="text-gray-700 leading-relaxed">{feature.description}</p>
               </div>
             </div>
           ))}

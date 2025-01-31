@@ -25,7 +25,7 @@ const Hero = ({ isLoggedIn }) => {
 
           <div className="mt-10 flex justify-center">
             <Link
-              to={isLoggedIn ? "/dashboard" : "/login"}
+              to={isLoggedIn ? "/jobprovoider" : "/jobprovoider"}
               className="inline-block px-8 py-4 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
             >
               Find Jobs
@@ -48,14 +48,6 @@ const Hero = ({ isLoggedIn }) => {
         ))}
       </div>
 
-      {/* Hero illustration - positioned below stats */}
-      <div className="mt-16 md:mt-20 relative pointer-events-none">
-        <img
-          className="object-cover object-center w-full h-auto mx-auto md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl"
-          src="https://d33wubrfki0l68.cloudfront.net/54780decfb9574945bc873b582cdc6156144a2ba/d9fa1/images/hero/4/illustration.png"
-          alt="Hero Illustration"
-        />
-      </div>
 
       
     </section>

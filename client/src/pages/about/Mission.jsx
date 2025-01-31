@@ -1,92 +1,123 @@
 import React from "react";
 import { Users, Target, Shield } from "lucide-react";
+import { motion } from "framer-motion";
 
 const About = () => {
   return (
-    <div className="py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
-          <div className="relative">
-            <div className="aspect-w-3 rounded-2xl overflow-hidden shadow-xl">
+    <section className="relative py-16 overflow-hidden">
+      {/* Grid background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col lg:flex-row items-center gap-12"
+        >
+          {/* Image Section */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative w-full lg:w-5/12"
+          >
+            <div className="aspect-w-4 aspect-h-3 rounded-2xl overflow-hidden shadow-xl">
               <img
                 src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80"
                 alt="Team collaboration"
-                className="w-full h-full object-cover transition-transform transform hover:scale-105 hover:opacity-90"
+                className="w-full h-full object-cover transition-all duration-500 hover:scale-105"
               />
             </div>
-            <div className="absolute -bottom-8 -right-8 bg-black text-white p-8 rounded-xl shadow-lg hidden lg:block">
-              <div className="text-4xl font-bold">10K+</div>
-              <div className="text-blue-100">Success Stories</div>
-            </div>
-          </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="absolute -bottom-6 -right-6 bg-gray-900 text-white p-6 rounded-xl shadow-lg hidden lg:block hover:shadow-2xl transition-all duration-300"
+            >
+              <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">10K+</div>
+              <div className="text-gray-200">Success Stories</div>
+            </motion.div>
+          </motion.div>
 
-          <div className="mt-12 lg:mt-0 text-center lg:text-left">
-            <span className="items-center text-center mb-7">
-              <span className="relative inline-flex sm:inline">
-                <span className="bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg filter opacity-30 w-full h-full absolute inset-0"></span>
-                <span className="relative mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-4xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj text-center">
-                  Our Mission & Inspiration
-                </span>
-              </span>
-            </span>
+          {/* Content Section */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="w-full lg:w-7/12"
+          >
+            <h2 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl lg:text-5xl font-pj mb-6">
+              Our Mission & 
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"> Inspiration</span>
+            </h2>
 
-            <p className="text-lg text-gray-700 mb-8">
+            <p className="text-base leading-7 text-gray-600 font-inter mb-8">
               Born from the desire to bridge the gap between skilled workers and
-              meaningful opportunities, LabourHub is more than just a platform—
-              it's a community dedicated to empowering workers and facilitating
-              growth in local economies.
+              meaningful opportunities, LabourHub is revolutionizing the way labor
+              connects with opportunity. We're building a future where every skilled
+              worker has access to fair, reliable work.
             </p>
 
-            <div className="space-y-8">
-              <div className="flex items-start space-x-6">
+            <div className="space-y-4">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="flex items-start space-x-4 p-4 rounded-xl bg-white/80 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100"
+              >
                 <div className="flex-shrink-0">
-                  <Users className="w-8 h-8 text-black transform hover:scale-125 transition-transform duration-300" />
+                  <Users className="w-8 h-8 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                    Community-Driven
+                  <h3 className="text-lg font-bold text-gray-900 font-pj">
+                    Community-Driven Excellence
                   </h3>
-                  <p className="text-gray-600">
-                    Built on trust and transparency, our platform ensures fair
-                    opportunities for all members.
+                  <p className="mt-1 text-sm leading-6 text-gray-600 font-inter">
+                    Built on trust and transparency, our platform fosters a vibrant
+                    community where skilled professionals connect and thrive together.
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-start space-x-6">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="flex items-start space-x-4 p-4 rounded-xl bg-white/80 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100"
+              >
                 <div className="flex-shrink-0">
-                  <Target className="w-8 h-8 text-black transform hover:scale-125 transition-transform duration-300" />
+                  <Target className="w-8 h-8 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                    Focused on Impact
+                  <h3 className="text-lg font-bold text-gray-900 font-pj">
+                    Focused on Real Impact
                   </h3>
-                  <p className="text-gray-600">
-                    Every connection made on LabourHub contributes to stronger,
-                    more resilient communities.
+                  <p className="mt-1 text-sm leading-6 text-gray-600 font-inter">
+                    Every connection made on LabourHub strengthens local economies,
+                    empowers workers, and builds more resilient communities.
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-start space-x-6">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="flex items-start space-x-4 p-4 rounded-xl bg-white/80 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100"
+              >
                 <div className="flex-shrink-0">
-                  <Shield className="w-8 h-8 text-black transform hover:scale-125 transition-transform duration-300" />
+                  <Shield className="w-8 h-8 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                    Safety First
+                  <h3 className="text-lg font-bold text-gray-900 font-pj">
+                    Trust & Security First
                   </h3>
-                  <p className="text-gray-600">
-                    We prioritize the security and well-being of our users
-                    through verified profiles and secure payments.
+                  <p className="mt-1 text-sm leading-6 text-gray-600 font-inter">
+                    We prioritize your safety with verified profiles, secure payments,
+                    and a transparent review system that builds confidence.
                   </p>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 };
 

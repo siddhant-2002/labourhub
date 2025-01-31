@@ -39,40 +39,42 @@ const Contactus = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
-      <div className="p-8 max-w-6xl w-full">
-        <div className="items-center text-center mb-16">
+    <div className="min-h-screen flex flex-col items-center justify-start py-8">
+      <div className="w-full max-w-6xl px-4">
+        <div className="text-center mb-8">
           <span className="relative inline-flex sm:inline">
             <span className="bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg filter opacity-30 w-full h-full absolute inset-0"></span>
-            <span className="relative mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj text-center">
+            <span className="relative text-4xl font-bold leading-tight text-gray-900 sm:text-4xl lg:text-4xl font-pj">
               Contact Us
             </span>
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Details */}
-          <div className="p-6  rounded-lg shadow-md">
-            <h3 className="text-2xl font-semibold mb-4 text-black">
+          <div className="p-6 rounded-3xl shadow-lg bg-white/95 backdrop-blur-xl">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">
               Contact Details
             </h3>
             <div className="flex gap-4 flex-col">
               {contactInfo.map((info) => (
                 <div
                   key={info.index}
-                  className={`p-4 border border-gray-200 rounded-lg ${info.color}`}
+                  className={`p-4 border border-gray-100 rounded-2xl ${info.color} transition-all duration-300 hover:shadow-md hover:-translate-y-1`}
                 >
-                  <div className="mb-2 flex items-start gap-4">
-                    <FontAwesomeIcon
-                      icon={info.icon}
-                      className="text-black"
-                    />
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 flex items-center justify-center bg-white rounded-xl shadow-sm">
+                      <FontAwesomeIcon
+                        icon={info.icon}
+                        className="text-gray-800 text-lg"
+                      />
+                    </div>
                     <div>
-                      <p className="text-lg font-medium">
-                        {info.title}:{" "}
-                        <span className="font-normal flex flex-wrap">
-                          {info.description}
-                        </span>
+                      <h4 className="text-base font-medium text-gray-900 mb-0.5">
+                        {info.title}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {info.description}
                       </p>
                     </div>
                   </div>
@@ -82,13 +84,13 @@ const Contactus = () => {
           </div>
 
           {/* Contact Form */}
-          <div>
-            <h3 className="text-2xl font-semibold mb-2 text-black">
+          <div className="p-6 rounded-3xl shadow-lg bg-white/95 backdrop-blur-xl">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">
               Send Us a Message
             </h3>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-2">
-                <label htmlFor="name" className="block text-lg font-medium mb-2">
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Name
                 </label>
                 <input
@@ -97,12 +99,12 @@ const Contactus = () => {
                   name="name"
                   required
                   aria-required="true"
-                  className="w-full p-2 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
 
-              <div className="mb-2">
-                <label htmlFor="email" className="block text-lg font-medium mb-2">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email
                 </label>
                 <input
@@ -111,12 +113,12 @@ const Contactus = () => {
                   name="email"
                   required
                   aria-required="true"
-                  className="w-full p-2 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
 
-              <div className="mb-2">
-                <label htmlFor="phone" className="block text-lg font-medium mb-2">
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                   Phone
                 </label>
                 <input
@@ -125,34 +127,35 @@ const Contactus = () => {
                   name="phone"
                   required
                   aria-required="true"
-                  className="w-full p-2 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
 
-              <div className="mb-2">
-                <label htmlFor="message" className="block text-lg font-medium mb-2">
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
                   Message
                 </label>
                 <textarea
                   id="message"
                   name="message"
-                  rows="4"
+                  rows="3"
                   required
                   aria-required="true"
-                  className="w-full p-2 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 ></textarea>
               </div>
 
-              <div className="w-full relative inline-flex mt-5 group">
-                <div className="w-full absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
-
-                <button className="w-full relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
-                  Submit
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full relative inline-flex items-center justify-center px-6 py-3 text-base font-bold text-white transition-all duration-300 bg-gray-900 rounded-xl hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transform hover:-translate-y-1"
+                >
+                  Send Message
                 </button>
               </div>
             </form>
             {formStatus && (
-              <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-lg">
+              <div className="mt-3 p-3 bg-green-50 text-green-800 rounded-xl border border-green-100 text-sm">
                 {formStatus}
               </div>
             )}

@@ -5,33 +5,38 @@ import Mission from "./Mission";
 
 const Aboutus = () => {
   return (
-    <div className="min-h-screen ">
-      <div className="pt-10 pb-12 md:pt-20 md:pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              About{" "}
-              <span className="items-center text-center mb-7">
-                <span className="relative inline-flex sm:inline">
-                  <span className="bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg filter opacity-30 w-full h-full absolute inset-0"></span>
-                  <span className="relative mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj text-center">
-                    LabourHub
-                  </span>
-                </span>
-              </span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Connecting skilled professionals with meaningful opportunities
-              since 2023
-            </p>
-          </div>
+    <div className="min-h-screen pt-24">
+      {/* Grid background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+
+      {/* Hero Section */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-10">
+        <div className="inline-block animate-float">
+          <p className="inline-flex px-4 py-2 text-base text-white border border-gray-200 rounded-full backdrop-blur-sm font-pj bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+            🌟 Transforming Work Culture
+          </p>
         </div>
+
+        <h1 className="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj flex flex-col items-center gap-4 sm:flex-row sm:gap-3 justify-center">
+          <span>About</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+            LabourHub
+          </span>
+        </h1>
+        
+        <p className="max-w-2xl mx-auto mt-6 text-base leading-7 text-gray-600 font-inter">
+          Empowering skilled professionals to discover meaningful opportunities and build successful careers through our innovative platform.
+        </p>
       </div>
 
-      <MissionSection />
-      <Timeline />
-      <Mission />
+      {/* Sections */}
+      
+          <MissionSection />
+        
 
+          <Timeline />
+
+          <Mission />
       
     </div>
   );
