@@ -47,7 +47,7 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen ">
       <Router>
         <Header isLoggedIn={isLoggedIn} user={user} />
         <Routes>
