@@ -12,6 +12,7 @@ const RecommendedJobs = () => {
   const [activeTab, setActiveTab] = useState('recommended');
 
   const { jobs, loading, error, total } = useJobs(filters);
+ 
 
   const handleFilterChange = (newFilters) => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
@@ -99,7 +100,6 @@ const RecommendedJobs = () => {
       </div>
 
       <div className="relative">
-        {/* <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:24px_24px]"></div> */}
         <div className="relative px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
           <div className="mb-8">
             <div className="relative mb-6">
@@ -123,7 +123,7 @@ const RecommendedJobs = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {jobs.map((job) => (
-                <JobCard key={job.id} {...job} />
+                <JobCard key={job._id} {...job} />
               ))}
               
               {jobs.length < total && (

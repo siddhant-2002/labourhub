@@ -1,51 +1,28 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link } from "react-router-dom";
 import { Phone, Lock, ArrowRight, Loader2 } from "lucide-react";
-import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const { login, error, isLoading } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post("http://localhost:3000/login", {
-        phone,
-        password,
-      });
-      
-      if (rememberMe) {
-        localStorage.setItem("token", response.data.token);
-      } else {
-        sessionStorage.setItem("token", response.data.token);
-      }
-
-      navigate("/");
-      window.location.reload();
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(
-        err.response?.data?.message || 
-        "Invalid phone number or password. Please try again."
-      );
-    } finally {
-      setIsLoading(false);
+    const success = await login(phone, password);
+    if (success) {
+      toast.success("Login successful!");
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <ToastContainer />
       <div className="relative max-w-md w-full space-y-8">
-       
-
         {/* Main Card */}
         <div className="relative bg-white p-8 rounded-2xl shadow-xl">
           {/* Gradient Background */}

@@ -25,7 +25,7 @@ const Hero = ({ isLoggedIn }) => {
 
           <div className="mt-10 flex justify-center">
             <Link
-              to={isLoggedIn ? "/jobprovoider" : "/jobprovoider"}
+              to={isLoggedIn ? "/jobprovoider" : "/dashboard"}
               className="inline-block px-8 py-4 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
             >
               Find Jobs

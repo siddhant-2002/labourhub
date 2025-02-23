@@ -7,99 +7,76 @@ const login = async (req, res) => {
   try {
     const { phone, password } = req.body;
 
-    if (!phone || !password) {
-      return res.status(400).json({
-        message: "Please enter all fields",
-      });
-    }
-
-    let user = await User.findOne({ phone });
+    // Find user by email
+    const user = await User.findOne({ phone });
     if (!user) {
       return res.status(401).json({
-        message: "User does not exist",
+        message: "Invalid email or password",
       });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        message: "Incorrect password",
+    // Compare password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Invalid email or password",
       });
     }
 
-    const payload = {
-      id: user._id,
-      role: user.role,
-      mobile: user.phone,
-    };
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, phone: user.phone, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    user = user.toObject();
-    user.password = undefined;
-    user.token = token;
-
-    const options = {
-      expires: new Date(Date.now() + 3600000),
-      httpOnly: true,
-    };
-
-    res.cookie("token", token, { options });
-
-    return res.json({
+    return res.status(200).json({
       message: "Login successful",
-      user,
       token,
+      user: {
+        id: user._id,
+        name: user.name,
+        phone: user.phone,
+        role: user.role,
+      },
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Error logging in",
+      message: "Error during login",
+      error: error.message,
     });
   }
 };
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
   try {
-    const { name, phone, email, password, role } = req.body;
-    // console.log(name, phone,email, password, role);
+    const { name, phone, password, role } = req.body;
 
-    // const userExists = await User.findOne({ phone });
-    // if (userExists) {
-    //   return res.status(400).json({
-    //     message: "User already exists",
-    //   });
-    // }
-    console.log("hello");
-    // Hash the password
-    let passwordHash;
-    try {
-      passwordHash = await bcrypt.hash(password, 10);
-    } catch (error) {
-      return res.status(500).json({
-        message: "error hashing password",
+    // Check if user exists
+    const userExists = await User.findOne({ phone });
+    if (userExists) {
+      return res.status(400).json({
+        message: "User already exists",
       });
     }
 
-    // Create a new user
+    const passwordHash = await bcrypt.hash(password, 10);
+
     const newUser = await User.create({
       name,
       phone,
-      email,
       password: passwordHash,
       role,
     });
 
-    // console.log(newUser)
-
-    return res.json({
-      message: "User created successfully",
-      user: newUser,
-    });
+    // Pass the userId to the next middleware
+    req.body.userId = newUser._id;
+    req.newUser = newUser; // Store newUser in the request object
+    next();
   } catch (error) {
     return res.status(500).json({
-      message: "error creating user",
+      message: "Error creating user",
+      error: error.message,
     });
   }
 };

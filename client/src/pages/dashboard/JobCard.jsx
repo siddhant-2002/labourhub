@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { MapPin, Clock, DollarSign, Briefcase, BookmarkPlus, BookmarkCheck, Share2 } from 'lucide-react';
+import { MapPin, DollarSign, Briefcase, BookmarkPlus, BookmarkCheck, Share2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const JobCard = ({
-  title,
-  company,
-  location,
+  jobTitle,
+  jobLocation,
   salary,
-  type,
-  postedDate,
-  description,
+  jobType,
+  jobDescription
 }) => {
   const [isSaved, setIsSaved] = useState(false);
 
@@ -29,8 +27,8 @@ const JobCard = ({
     e.preventDefault();
     try {
       await navigator.share({
-        title: `${title} at ${company}`,
-        text: description,
+        title: jobTitle,
+        text: jobDescription,
         url: window.location.href,
       });
     } catch (err) {
@@ -50,7 +48,7 @@ const JobCard = ({
         {/* Job Type Badge */}
         <div className="inline-block mb-4">
           <span className="inline-flex px-3 py-1 text-sm text-white rounded-full backdrop-blur-sm bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 font-medium">
-            {type}
+            {jobType}
           </span>
         </div>
 
@@ -58,11 +56,8 @@ const JobCard = ({
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-xl font-bold text-gray-900 mb-1 font-pj">
-              {title}
+              {jobTitle}
             </h3>
-            <p className="text-base text-gray-600 font-medium font-inter">
-              {company}
-            </p>
           </div>
           
           <div className="flex space-x-2">
@@ -93,7 +88,7 @@ const JobCard = ({
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex items-center text-gray-600">
             <MapPin className="w-4 h-4 mr-2" />
-            <span className="text-sm font-inter">{location}</span>
+            <span className="text-sm font-inter">{jobLocation}</span>
           </div>
           <div className="flex items-center text-gray-600">
             <DollarSign className="w-4 h-4 mr-2" />
@@ -101,17 +96,13 @@ const JobCard = ({
           </div>
           <div className="flex items-center text-gray-600">
             <Briefcase className="w-4 h-4 mr-2" />
-            <span className="text-sm font-inter">{type}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <Clock className="w-4 h-4 mr-2" />
-            <span className="text-sm font-inter">{postedDate}</span>
+            <span className="text-sm font-inter">{jobType}</span>
           </div>
         </div>
 
         {/* Description */}
         <p className="text-gray-600 text-base leading-7 mb-6 line-clamp-2 font-inter">
-          {description}
+          {jobDescription}
         </p>
 
         {/* Action Button */}

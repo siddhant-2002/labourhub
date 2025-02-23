@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '../services/api';
+import axios from 'axios';
 
-export const useJobs = (filters) => {
+const API_BASE_URL = 'http://localhost:3000'; // Replace with actual API URL
+
+export const useJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,9 +13,10 @@ export const useJobs = (filters) => {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const response = await apiService.searchJobs(filters);
-        setJobs(response.jobs);
-        setTotal(response.total);
+        const response = await axios.get(`${API_BASE_URL}/jobs/all`);
+        
+        setJobs(response.data);
+        setTotal(response.data.length);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch jobs');
@@ -23,7 +26,7 @@ export const useJobs = (filters) => {
     };
 
     fetchJobs();
-  }, [filters]);
+  }, []);
 
   return { jobs, loading, error, total };
 };

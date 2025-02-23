@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, User, Phone, ArrowRight, Loader2, Briefcase } from "lucide-react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
   const [credentials, setCredentials] = useState({
@@ -26,16 +28,14 @@ const Signup = () => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
-
     try {
-      const response = await axios.post(
-        "http://localhost:3000/signup",
-        credentials
-      );
-      console.log(response);
-      navigate("/login");
+      await axios.post("http://localhost:3000/signup", credentials);
+      toast.success("User created successfully!");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000); // Redirect after 2 seconds
     } catch (err) {
-      console.error("Signup error:", err);
+      // console.error("Signup error:", err);
       setError(
         err.response?.data?.message || 
         "An error occurred during signup. Please try again."
@@ -47,9 +47,8 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center pt-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <ToastContainer />
       <div className="relative max-w-md w-full space-y-8">
-
-
         {/* Main Card */}
         <div className="relative bg-white p-8 rounded-2xl shadow-xl">
           {/* Gradient Background */}
@@ -152,7 +151,7 @@ const Signup = () => {
                       className="block w-full pl-10 pr-3 py-2.5 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
                     >
                       <option value="worker">Worker</option>
-                      <option value="employer">Employer</option>
+                      <option value="employer">work provoider</option>
                     </select>
                   </div>
                 </div>

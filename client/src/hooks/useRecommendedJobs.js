@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '../services/api';
+import axios from 'axios';
+
+const API_BASE_URL = 'https://api.labourhub.com/v1'; // Replace with actual API URL
 
 export const useRecommendedJobs = (userId) => {
   const [jobs, setJobs] = useState([]);
@@ -10,8 +12,8 @@ export const useRecommendedJobs = (userId) => {
     const fetchRecommendedJobs = async () => {
       try {
         setLoading(true);
-        const recommendedJobs = await apiService.getRecommendedJobs(userId);
-        setJobs(recommendedJobs);
+        const response = await axios.get(`${API_BASE_URL}/users/${userId}/recommended-jobs`);
+        setJobs(response.data.jobs);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch recommended jobs');

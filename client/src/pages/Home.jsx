@@ -15,6 +15,7 @@ import Aboutus from "./about/Aboutus";
 import WorkerProfile from "./profiles/WorkerProfile";
 import ProvoiderProfile from "./profiles/ProvoiderProfile";
 import Features from "./features/Features";
+import { AuthProvider } from "../context/AuthContext";
 
 import { jwtDecode } from "jwt-decode";
 import JobProvider from "./dashboard/JobProvoider";
@@ -49,32 +50,34 @@ const Home = () => {
   return (
     <div className="min-h-screen ">
       <Router>
-        <Header isLoggedIn={isLoggedIn} user={user} />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/"
-            element={
-              <>
-                <Hero isLoggedIn={isLoggedIn} />
-                <Flex />
-                <Video />
-                <Faq />
-                <Contactus />
-                {/* <JobProvider />
-                <ProfileDropdown /> */}
-              </>
-            }
-          />
-          <Route path="/workerprofile" element={<WorkerProfile />} />
-          <Route path="/provoiderprofile" element={<ProvoiderProfile />} />
-          <Route path="/dashboard" element={<RecommendedJobs />} />
-          <Route path="/jobprovoider" element={<JobProvider />} />
-          <Route path="/about" element={<Aboutus />} />
-          <Route path="/features" element={<Features />} />
-        </Routes>
-        <Footer />
+        <AuthProvider>
+          <Header user={user} />
+
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <Hero isLoggedIn={isLoggedIn} />
+                  <Flex />
+                  <Video />
+                  <Faq />
+                  <Contactus />
+                  
+                </>
+              }
+            />
+            <Route path="/workerprofile" element={<WorkerProfile />} />
+            <Route path="/provoiderprofile" element={<ProvoiderProfile />} />
+            <Route path="/dashboard" element={<RecommendedJobs />} />
+            <Route path="/jobprovoider" element={<JobProvider />} />
+            <Route path="/about" element={<Aboutus />} />
+            <Route path="/features" element={<Features />} />
+          </Routes>
+          <Footer />
+        </AuthProvider>
       </Router>
     </div>
   );
