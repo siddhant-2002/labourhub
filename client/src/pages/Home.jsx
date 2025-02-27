@@ -13,7 +13,7 @@ import RecommendedJobs from "./dashboard/RecommendedJobs";
 import Loader from "../components/Loader";
 import Aboutus from "./about/Aboutus";
 import WorkerProfile from "./profiles/WorkerProfile";
-import ProvoiderProfile from "./profiles/ProvoiderProfile";
+import ProviderProfile from "./profiles/ProvoiderProfile";
 import Features from "./features/Features";
 import { AuthProvider } from "../context/AuthContext";
 
@@ -70,7 +70,7 @@ const Home = () => {
               }
             />
             <Route path="/workerprofile" element={<WorkerProfile />} />
-            <Route path="/provoiderprofile" element={<ProvoiderProfile />} />
+            <Route path="/provoiderprofile" element={<ProviderProfile />} />
             <Route path="/dashboard" element={<RecommendedJobs />} />
             <Route path="/jobprovoider" element={<JobProvider />} />
             <Route path="/about" element={<Aboutus />} />

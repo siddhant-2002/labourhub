@@ -1,11 +1,15 @@
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../utils/axios";  // Use the configured axios instance
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Initialize user from localStorage during context creation
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -15,33 +19,26 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:3000/login", { phone, password });
+      const response = await axios.post("/login", { phone, password });
+      const { user: userData, token } = response.data;
 
       // Set user state
-      setUser(response.data.user);
+      setUser(userData);
 
       // Store token and user data in localStorage
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
 
       // Redirect to dashboard
-      navigate(response.data.user.role === "worker" ? "/dashboard" : "/jobprovoider");
-      return true; // Indicate success
+      navigate(userData.role === "worker" ? "/dashboard" : "/jobprovoider");
+      return true;
     } catch (err) {
-      setError(
-        err.response?.data?.message || "An error occurred during login. Please try again."
-      );
-      return false; // Indicate failure
+      setError(err.response?.data?.message || "An error occurred during login. Please try again.");
+      return false;
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    // Check if user data exists in localStorage (for persistence)
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
-  }, []);
 
   const logout = () => {
     setUser(null);
@@ -50,6 +47,18 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     navigate('/');
   };
+
+  // Check authentication status on mount and token change
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (token && storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, error, isLoading }}>
