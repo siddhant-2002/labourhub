@@ -6,8 +6,8 @@ const getPersonalInfoById = async (req, res) => {
   try {
     const {userId} = req.query;
     const personalInfo = await info.find({ userId });    
-    console.log(userId)
-    console.log(personalInfo)
+    // console.log(userId)
+    // console.log(personalInfo)
     if (!personalInfo) {
       return res.status(404).json({ message: "Personal info not found" });
     }
@@ -20,7 +20,11 @@ const getPersonalInfoById = async (req, res) => {
 // Update personal info by ID
 const updatePersonalInfoById = async (req, res) => {
   try {
-    const personalInfo = await PersonalInfo.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { userId } = req.query;
+    console.log(userId);
+    console.log(req.body);
+    const personalInfo = await info.findOneAndUpdate({ userId }, req.body, { new: true, runValidators: true });
+    console.log(personalInfo);
     if (!personalInfo) {
       return res.status(404).json({ message: "Personal info not found" });
     }

@@ -10,11 +10,13 @@ const initializePersonalInfo = async (req, res, next) => {
     const info = new PersonalInfo({
       userId: userId,
       gender: '',
-      address: '',
-      aadharcard: '',
+      email: '',
+      locatuion: '',
       skills: [],
       education: '',
+      aadharcard: '',
       experience: '',
+      jobHistory: [],
       rating: 0
     });
 

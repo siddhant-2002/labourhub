@@ -15,7 +15,7 @@ router.post("/signup", signup, initializePersonalInfo);
 
 //personal info
 router.get("/personalinfo", getPersonalInfoById);
-router.put("/personalinfo/:id", updatePersonalInfoById);
+router.put("/personalinfo", updatePersonalInfoById);
 router.delete("/personalinfo/:id", deletePersonalInfoById);
 
 //use this for posting, editing and deleting provided jobs in provider dashboard
