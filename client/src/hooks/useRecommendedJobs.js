@@ -4,9 +4,9 @@ import axios from 'axios';
 const API_URL = 'http://localhost:3000'; // Update with your backend URL
 
 // API functions
-const getRecommendations = async (workerId) => {
+const getRecommendations = async (userId) => {
     try {
-        const response = await axios.post(`${API_URL}/recommend`, { worker_id: workerId });
+        const response = await axios.post(`${API_URL}/recommend`, { userId: userId });
         return response.data;
     } catch (error) {
         console.error('Error fetching recommendations:', error);
@@ -14,18 +14,20 @@ const getRecommendations = async (workerId) => {
     }
 };
 
-const sendSMS = async (workerId, jobId) => {
-    try {
-        const response = await axios.post(`${API_URL}/send_sms`, { worker_id: workerId, job_id: jobId });
-        return response.data;
-    } catch (error) {
-        console.error('Error sending SMS:', error);
-        throw error;
-    }
-};
+
+
+// const sendSMS = async (userId, jobId) => {
+//     try {
+//         const response = await axios.post(`${API_URL}/send_sms`, { userId: userId, jobId: jobId });
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error sending SMS:', error);
+//         throw error;
+//     }
+// };
 
 // Hook for recommended jobs
-export const useRecommendedJobs = (userId, skills) => {
+export const useRecommendedJobs = (userId) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,8 +36,9 @@ export const useRecommendedJobs = (userId, skills) => {
     const fetchRecommendedJobs = async () => {
       try {
         setLoading(true);
-        const data = await getRecommendations(userId, skills);
-        sendSMS();
+        const data = await getRecommendations(userId);
+        console.log(data)
+        // sendSMS();
         setJobs(data);
         setError(null);
       } catch (err) {
@@ -45,10 +48,10 @@ export const useRecommendedJobs = (userId, skills) => {
       }
     };
 
-    if (userId && skills) {
+    if (userId) {
       fetchRecommendedJobs();
     }
-  }, [userId, skills]);
+  }, [userId]);
 
   return { jobs, loading, error };
 };
