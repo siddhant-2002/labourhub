@@ -3,9 +3,11 @@ const router = express.Router();
 
 // Controllers (you need to implement these)
 const { login, signup } = require("../controllers/login");
-const { getPersonalInfoById, updatePersonalInfoById, deletePersonalInfoById } = require("../controllers/personalinfo");
+const { getPersonalInfoById, updatePersonalInfoById, deletePersonalInfoById,getallworkers } = require("../controllers/personalinfo");
 const { postJob, editJob, deleteJob, getRecommendedJobs,getJobByProvoiderId, getalljobs } = require('../controllers/job');
 const initializePersonalInfo = require('../middleware/initializePersonalInfo');
+const { getRecommendations, sendSMS } = require('../controllers/recommendjobs');
+
 
 
 // Routes
@@ -29,6 +31,11 @@ router.get('/jobs', getJobByProvoiderId);
 // //use this for getting recommended jobs for worker dashboard
 router.get('/jobs/recommended', getRecommendedJobs);
 router.get('/jobs/all', getalljobs);
+router.get('/workers/all', getallworkers);
+
+//use this for getting recommended jobs for worker dashboard
+router.post('/recommend', getRecommendations);
+router.post('/send_sms', sendSMS);
 
 
 

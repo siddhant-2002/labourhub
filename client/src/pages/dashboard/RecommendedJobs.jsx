@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import JobCard from './JobCard';
 import JobFilters from './JobFilters';
 import { useJobs } from '../../hooks/useJobs';
+import { useRecommendedJobs } from '../../hooks/useRecommendedJobs';
 import { Loader, Search, Briefcase, TrendingUp } from 'lucide-react';
+import { AuthContext } from "../../context/AuthContext";
+
+
 
 const RecommendedJobs = () => {
   const [filters, setFilters] = useState({
@@ -11,8 +15,10 @@ const RecommendedJobs = () => {
   });
   const [activeTab, setActiveTab] = useState('recommended');
 
+   const { user } = useContext(AuthContext);
+
   const { jobs, loading, error, total } = useJobs(filters);
- 
+  const { jobs: recommendedJobs, loading: recLoading } = useRecommendedJobs(user.id);
 
   const handleFilterChange = (newFilters) => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
@@ -115,46 +121,71 @@ const RecommendedJobs = () => {
             <JobFilters onFilterChange={handleFilterChange} />
           </div>
 
-          {loading && jobs.length === 0 ? (
-            <div className="flex flex-col justify-center items-center h-64">
-              <Loader className="w-10 h-10 animate-spin text-gray-900 mb-4" />
-              <p className="text-gray-600 font-medium">Finding the best matches for you...</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {jobs.map((job) => (
-                <JobCard key={job._id} {...job} />
-              ))}
-              
-              {jobs.length < total && (
-                <div className="mt-12 flex justify-center col-span-full">
-                  <button
-                    onClick={handleLoadMore}
-                    disabled={loading}
-                    className="px-8 py-4 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <span className="flex items-center">
-                        <Loader className="w-5 h-5 animate-spin mr-2" />
-                        Loading more jobs...
-                      </span>
-                    ) : (
-                      'Load More Jobs'
-                    )}
-                  </button>
-                </div>
-              )}
-
-              {jobs.length === 0 && (
-                <div className="text-center py-12 col-span-full">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                    <Search className="w-8 h-8 text-gray-400" />
+          {activeTab === 'recommended' ? (
+            recLoading && recommendedJobs.length === 0 ? (
+              <div className="flex flex-col justify-center items-center h-64">
+                <Loader className="w-10 h-10 animate-spin text-gray-900 mb-4" />
+                <p className="text-gray-600 font-medium">Finding the best matches for you...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {recommendedJobs.map((job) => (
+                  <JobCard key={job._id} {...job} />
+                ))}
+                
+                {recommendedJobs.length === 0 && (
+                  <div className="text-center py-12 col-span-full">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                      <Search className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">No jobs found</h3>
+                    <p className="text-gray-600">Try adjusting your search filters or try again later.</p>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">No jobs found</h3>
-                  <p className="text-gray-600">Try adjusting your search filters or try again later.</p>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )
+          ) : (
+            loading && jobs.length === 0 ? (
+              <div className="flex flex-col justify-center items-center h-64">
+                <Loader className="w-10 h-10 animate-spin text-gray-900 mb-4" />
+                <p className="text-gray-600 font-medium">Finding the best matches for you...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {jobs.map((job) => (
+                  <JobCard key={job._id} {...job} />
+                ))}
+                
+                {jobs.length < total && (
+                  <div className="mt-12 flex justify-center col-span-full">
+                    <button
+                      onClick={handleLoadMore}
+                      disabled={loading}
+                      className="px-8 py-4 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <span className="flex items-center">
+                          <Loader className="w-5 h-5 animate-spin mr-2" />
+                          Loading more jobs...
+                        </span>
+                      ) : (
+                        'Load More Jobs'
+                      )}
+                    </button>
+                  </div>
+                )}
+
+                {jobs.length === 0 && (
+                  <div className="text-center py-12 col-span-full">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                      <Search className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">No jobs found</h3>
+                    <p className="text-gray-600">Try adjusting your search filters or try again later.</p>
+                  </div>
+                )}
+              </div>
+            )
           )}
         </div>
       </div>

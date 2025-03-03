@@ -1,0 +1,123 @@
+{"jobs": [
+    {
+      "job_id": 1,
+      "required_skills": ["plumbing"],
+      "description": "Fix bathroom pipes",
+      "location": "New York",
+      "provider_name": "ABC Plumbing",
+      "provider_contact": "+1111111111"
+    },
+    {
+      "job_id": 2,
+      "required_skills": ["carpentry"],
+      "description": "Build a wooden shelf",
+      "location": "Chicago",
+      "provider_name": "XYZ Carpentry",
+      "provider_contact": "+2222222222"
+    },
+    {
+      "job_id": 3,
+      "required_skills": ["electrician"],
+      "description": "Install new wiring",
+      "location": "Los Angeles",
+      "provider_name": "PowerHouse Electricals",
+      "provider_contact": "+3333333333"
+    },
+    {
+      "job_id": 4,
+      "required_skills": ["gardening"],
+      "description": "Mow the lawn",
+      "location": "San Francisco",
+      "provider_name": "Green Gardeners",
+      "provider_contact": "+4444444444"
+    },
+    {
+      "job_id": 5,
+      "required_skills": ["painting"],
+      "description": "Paint living room walls",
+      "location": "Houston",
+      "provider_name": "Fresh Coats Painting",
+      "provider_contact": "+5555555555"
+    },
+    {
+      "job_id": 6,
+      "required_skills": ["roofing"],
+      "description": "Repair roof leaks",
+      "location": "Dallas",
+      "provider_name": "Strong Roof Solutions",
+      "provider_contact": "+6666666666"
+    },
+    {
+      "job_id": 7,
+      "required_skills": ["cleaning"],
+      "description": "Deep clean the house",
+      "location": "Seattle",
+      "provider_name": "Spotless Cleaning Services",
+      "provider_contact": "+7777777777"
+    },
+    {
+      "job_id": 8,
+      "required_skills": ["welding"],
+      "description": "Fix metal gate",
+      "location": "Miami",
+      "provider_name": "Ironworks Welding",
+      "provider_contact": "+8888888888"
+    },
+    {
+      "job_id": 9,
+      "required_skills": ["HVAC technician"],
+      "description": "Fix heating system",
+      "location": "Boston",
+      "provider_name": "WarmHome HVAC",
+      "provider_contact": "+9999999999"
+    },
+    {
+      "job_id": 10,
+      "required_skills": ["mechanic"],
+      "description": "Car engine repair",
+      "location": "Denver",
+      "provider_name": "AutoFix Garage",
+      "provider_contact": "+1010101010"
+    },
+    {
+      "job_id": 11,
+      "required_skills": ["interior design"],
+      "description": "Redesign living room",
+      "location": "Phoenix",
+      "provider_name": "Dream Interiors",
+      "provider_contact": "+1212121212"
+    },
+    {
+      "job_id": 12,
+      "required_skills": ["handyman"],
+      "description": "Fix broken door hinges",
+      "location": "Philadelphia",
+      "provider_name": "HandyFix Services",
+      "provider_contact": "+1313131313"
+    },
+    {
+      "job_id": 13,
+      "required_skills": ["tile work"],
+      "description": "Replace broken tiles",
+      "location": "San Diego",
+      "provider_name": "Tile Perfect Solutions",
+      "provider_contact": "+1414141414"
+    },
+    {
+      "job_id": 14,
+      "required_skills": ["plumbing"],
+      "description": "Unclog kitchen sink",
+      "location": "Las Vegas",
+      "provider_name": "Speedy Plumbing",
+      "provider_contact": "+1515151515"
+    },
+    {
+      "job_id": 15,
+      "required_skills": ["electrician"],
+      "description": "Fix power outage issue",
+      "location": "Austin",
+      "provider_name": "Bright Sparks Electricals",
+      "provider_contact": "+1616161616"
+    }
+  ]
+}

@@ -1,6 +1,16 @@
 const info = require("../models/personalinfo");
 const user = require("../models/user");
 
+const getallworkers = async (req, res) => {
+  try {
+    const workers = await user.find({ role: "worker" });
+    // console.log(workers);
+    res.json(workers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get personal info by user ID
 const getPersonalInfoById = async (req, res) => {
   try {
@@ -21,8 +31,8 @@ const getPersonalInfoById = async (req, res) => {
 const updatePersonalInfoById = async (req, res) => {
   try {
     const { userId } = req.query;
-    console.log(userId);
-    console.log(req.body);
+    // console.log(userId);
+    // console.log(req.body);
     const personalInfo = await info.findOneAndUpdate({ userId }, req.body, { new: true, runValidators: true });
     console.log(personalInfo);
     if (!personalInfo) {
@@ -51,4 +61,5 @@ module.exports = {
   getPersonalInfoById,
   updatePersonalInfoById,
   deletePersonalInfoById,
+  getallworkers
 };
