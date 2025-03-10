@@ -10,7 +10,7 @@ const information = new mongoose.Schema({
   email: { type: String }, // Added email field
   location: { type: String },
   address: { type: String },
-  aadharcard: { type: String, unique: true },
+  aadharcard: { type: String, unique: true, sparse: true },
   skills: { type: [String] },
   education: { type: String },
   experience: { type: String },

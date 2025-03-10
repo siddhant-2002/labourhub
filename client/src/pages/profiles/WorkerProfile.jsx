@@ -64,7 +64,7 @@ const WorkerProfile = () => {
       return;
     }
 
-    const userId = user._id || user.id;
+    const userId = user?._id || user?.id;
 
     if (!userId) {
       setLoading(false);

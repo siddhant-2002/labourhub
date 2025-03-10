@@ -15,11 +15,13 @@ import Aboutus from "./about/Aboutus";
 import WorkerProfile from "./profiles/WorkerProfile";
 import ProviderProfile from "./profiles/ProvoiderProfile";
 import Features from "./features/Features";
+import Language from "../components/Language";
 import { AuthProvider } from "../context/AuthContext";
-
 import { jwtDecode } from "jwt-decode";
 import JobProvider from "./dashboard/JobProvoider";
-// import ProfileDropdown from "../components/ProfileDropdown";
+import translatePage from "../utils/translate";
+
+import RouteChangeListener from "../utils/routChange"; // Import the RouteChangeListener component
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -32,8 +34,6 @@ const Home = () => {
     user = jwtDecode(token);
   }
 
-  // console.log(user);
-
   useEffect(() => {
     // Simulate a loading delay
     const timer = setTimeout(() => {
@@ -43,6 +43,11 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // const handleRouteChange = () => {
+  //   console.log('Route has changed!');
+  //   // Add your custom logic here
+  // };
+
   if (loading) {
     return <Loader />;
   }
@@ -51,6 +56,7 @@ const Home = () => {
     <div className="min-h-screen ">
       <Router>
         <AuthProvider>
+          <RouteChangeListener onRouteChange={translatePage} /> {/* Add the RouteChangeListener component */}
           <Header user={user} />
 
           <Routes>
@@ -65,7 +71,6 @@ const Home = () => {
                   <Video />
                   <Faq />
                   <Contactus />
-                  
                 </>
               }
             />
@@ -75,6 +80,7 @@ const Home = () => {
             <Route path="/jobprovoider" element={<JobProvider />} />
             <Route path="/about" element={<Aboutus />} />
             <Route path="/features" element={<Features />} />
+            <Route path="/language" element={<Language />} />
           </Routes>
           <Footer />
         </AuthProvider>

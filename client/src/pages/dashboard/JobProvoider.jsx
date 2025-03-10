@@ -184,7 +184,7 @@ const JobProvider = () => {
                           type="text"
                           id="jobTitle"
                           name="jobTitle"
-                          placeholder="e.g. Construction Worker"
+                          placeholder="e.g. Construction Workerworker"
                           required
                           value={formData.jobTitle}
                           onChange={handleChange}
@@ -202,20 +202,15 @@ const JobProvider = () => {
                       >
                         Job Type <span className="text-red-500">*</span>
                       </label>
-                      <select
+                      <input
                         id="jobType"
                         name="jobType"
                         required
                         value={formData.jobType}
+                        placeholder="e.g. worker, plumber, etc."
                         onChange={handleChange}
                         className="w-full p-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 hover:border-gray-300"
-                      >
-                        <option value="">Select Type</option>
-                        <option value="full-time">Full Time</option>
-                        <option value="part-time">Part Time</option>
-                        <option value="contract">Contract</option>
-                        <option value="temporary">Temporary</option>
-                      </select>
+                      ></input>
                     </div>
                   </div>
                 </div>
@@ -369,9 +364,14 @@ const JobProvider = () => {
                         {job.jobdescription}
                       </p>
                     </div>
-                    <button className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                      Edit
-                    </button>
+                    <div className="flex items-center space-x-4">
+                      <button className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        Edit
+                      </button>
+                      <button className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        View Job
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">

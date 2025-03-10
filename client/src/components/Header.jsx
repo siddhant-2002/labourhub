@@ -84,7 +84,8 @@ const Header = () => {
                   isActive(link.path) ? "text-gray-900" : "text-gray-600"
                 }`}
               >
-                {link.label}
+                <span>{link.label}</span>
+
                 <span
                   className={`absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 transform origin-left transition-transform duration-200 ${
                     isActive(link.path)

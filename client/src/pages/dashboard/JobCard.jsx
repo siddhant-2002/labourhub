@@ -1,26 +1,22 @@
 import React, { useState } from 'react';
-import { MapPin, DollarSign, Briefcase, BookmarkPlus, BookmarkCheck, Share2 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { MapPin, DollarSign, Share2 } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import JobPopup from './JobPopup';
 
 const JobCard = ({
   jobTitle,
   jobLocation,
   salary,
   jobType,
-  jobDescription
+  jobDescription,
+  skills
 }) => {
-  const [isSaved, setIsSaved] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handleApply = (e) => {
     e.preventDefault();
     toast.success('Applied for job successfully');
-  };
-
-  const handleSave = (e) => {
-    e.preventDefault();
-    setIsSaved(!isSaved);
-    toast.success(isSaved ? 'Job removed from saved jobs' : 'Job saved successfully');
   };
 
   const handleShare = async (e) => {
@@ -36,8 +32,18 @@ const JobCard = ({
     }
   };
 
+  const handleViewJob = (e) => {
+    e.preventDefault();
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+
   return (
     <div className="relative bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg group">
+      <ToastContainer />
       {/* Grid background with gradient fade */}
       <div className="absolute inset-0  transition-opacity">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:14px_14px]"></div>
@@ -68,19 +74,7 @@ const JobCard = ({
             >
               <Share2 className="w-5 h-5" />
             </button>
-            <button
-              onClick={handleSave}
-              className={`p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 ${
-                isSaved ? 'text-gray-900' : ''
-              }`}
-              title={isSaved ? 'Remove from saved jobs' : 'Save job'}
-            >
-              {isSaved ? (
-                <BookmarkCheck className="w-5 h-5" />
-              ) : (
-                <BookmarkPlus className="w-5 h-5" />
-              )}
-            </button>
+            
           </div>
         </div>
 
@@ -94,10 +88,6 @@ const JobCard = ({
             <DollarSign className="w-4 h-4 mr-2" />
             <span className="text-sm font-inter">{salary}</span>
           </div>
-          <div className="flex items-center text-gray-600">
-            <Briefcase className="w-4 h-4 mr-2" />
-            <span className="text-sm font-inter">{jobType}</span>
-          </div>
         </div>
 
         {/* Description */}
@@ -106,13 +96,33 @@ const JobCard = ({
         </p>
 
         {/* Action Button */}
-        <button
-          onClick={handleApply}
-          className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-        >
-          Apply Now
-        </button>
+        <div className='flex space-x-4'>
+          <button
+            onClick={handleApply}
+            className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+          >
+            Apply Now
+          </button>
+          <button
+            onClick={handleViewJob}
+            className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+          >
+            View Job
+          </button>
+        </div>
       </div>
+
+      {isPopupOpen && (
+        <JobPopup
+          jobTitle={jobTitle}
+          jobLocation={jobLocation}
+          jobType={jobType}
+          jobDescription={jobDescription}
+          skills={skills}
+          salary={salary}
+          onClose={handleClosePopup}
+        />
+      )}
     </div>
   );
 };

@@ -74,6 +74,7 @@ const signup = async (req, res, next) => {
     req.newUser = newUser; // Store newUser in the request object
     next();
   } catch (error) {
+    console.error("Error during signup:", error); // Log the error
     return res.status(500).json({
       message: "Error creating user",
       error: error.message,

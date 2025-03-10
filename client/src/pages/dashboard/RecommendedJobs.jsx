@@ -1,6 +1,5 @@
 import React, { useState,useContext } from 'react';
 import JobCard from './JobCard';
-import JobFilters from './JobFilters';
 import { useJobs } from '../../hooks/useJobs';
 import { useRecommendedJobs } from '../../hooks/useRecommendedJobs';
 import { Loader, Search, Briefcase, TrendingUp } from 'lucide-react';
@@ -9,25 +8,16 @@ import { AuthContext } from "../../context/AuthContext";
 
 
 const RecommendedJobs = () => {
-  const [filters, setFilters] = useState({
-    page: 1,
-    limit: 9
-  });
+
   const [activeTab, setActiveTab] = useState('recommended');
 
    const { user } = useContext(AuthContext);
+   const userId = user ? user.id : null;
 
-  const { jobs, loading, error, total } = useJobs(filters);
-  const { jobs: recommendedJobs, loading: recLoading } = useRecommendedJobs(user.id);
 
-  const handleFilterChange = (newFilters) => {
-    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
-  };
-
-  const handleLoadMore = () => {
-    setFilters(prev => ({ ...prev, page: (prev.page || 1) + 1 }));
-  };
-
+  const { jobs, loading, error, total } = useJobs();
+  const { jobs: recommendedJobs, loading: recLoading } = useRecommendedJobs(userId);
+  
   if (error) {
     return (
       <section className="relative pt-24">
@@ -118,7 +108,7 @@ const RecommendedJobs = () => {
                 placeholder="Search jobs by title, company, or keywords..."
               />
             </div>
-            <JobFilters onFilterChange={handleFilterChange} />
+            
           </div>
 
           {activeTab === 'recommended' ? (
@@ -159,7 +149,7 @@ const RecommendedJobs = () => {
                 {jobs.length < total && (
                   <div className="mt-12 flex justify-center col-span-full">
                     <button
-                      onClick={handleLoadMore}
+                      
                       disabled={loading}
                       className="px-8 py-4 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >

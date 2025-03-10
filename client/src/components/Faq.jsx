@@ -12,32 +12,38 @@ const Faq = () => {
   const faqs = [
     {
       question: "How does the platform work for non-smartphone users?",
-      answer: "Our platform is designed to be accessible to everyone. For non-smartphone users, we provide:\n\n• Simple SMS-based job alerts\n• Voice call support in local languages\n• USSD-based job applications\n• Offline registration at local centers",
+      answer:
+        "Our platform is designed to be accessible to everyone. For non-smartphone users, we provide:\n\n• Simple SMS-based job alerts\n• Voice call support in local languages\n• USSD-based job applications\n• Offline registration at local centers",
       category: "Platform Access",
     },
     {
       question: "Is there a fee to use the platform?",
-      answer: "We believe in making job opportunities accessible to all:\n\n• Workers: Free registration and job applications\n• Basic job search: Always free\n• Job alerts: Free SMS notifications\n• Premium features: Optional paid services for employers",
+      answer:
+        "We believe in making job opportunities accessible to all:\n\n• Workers: Free registration and job applications\n• Basic job search: Always free\n• Job alerts: Free SMS notifications\n• Premium features: Optional paid services for employers",
       category: "Pricing",
     },
     {
       question: "How secure is the payment system?",
-      answer: "Your security is our top priority:\n\n• End-to-end encrypted transactions\n• Multiple payment options (UPI, bank transfer, cash)\n• Escrow service for large payments\n• 24/7 fraud prevention monitoring",
+      answer:
+        "Your security is our top priority:\n\n• End-to-end encrypted transactions\n• Multiple payment options (UPI, bank transfer, cash)\n• Escrow service for large payments\n• 24/7 fraud prevention monitoring",
       category: "Security",
     },
     {
       question: "Can I use the platform in my language?",
-      answer: "Yes! We support multiple Indian languages:\n\n• Hindi, English, and major regional languages\n• Voice support in local dialects\n• Multi-language SMS alerts\n• Local language customer support",
+      answer:
+        "Yes! We support multiple Indian languages:\n\n• Hindi, English, and major regional languages\n• Voice support in local dialects\n• Multi-language SMS alerts\n• Local language customer support",
       category: "Language Support",
     },
     {
       question: "What types of jobs are available?",
-      answer: "We offer diverse job opportunities:\n\n• Construction and labor work\n• Domestic help and housekeeping\n• Delivery and logistics\n• Factory and manufacturing\n• Agriculture and farming\n• Security services",
+      answer:
+        "We offer diverse job opportunities:\n\n• Construction and labor work\n• Domestic help and housekeeping\n• Delivery and logistics\n• Factory and manufacturing\n• Agriculture and farming\n• Security services",
       category: "Jobs",
     },
     {
       question: "How does the rating system work?",
-      answer: "Our rating system ensures quality and trust:\n\n• Two-way rating system\n• Verified reviews only\n• Performance badges for consistent service\n• Dispute resolution support",
+      answer:
+        "Our rating system ensures quality and trust:\n\n• Two-way rating system\n• Verified reviews only\n• Performance badges for consistent service\n• Dispute resolution support",
       category: "Ratings",
     },
   ];
@@ -60,7 +66,6 @@ const Faq = () => {
             Find answers to common questions about our platform
           </p>
         </div>
-        
 
         {/* FAQ Grid */}
         <div className="max-w-4xl mx-auto grid gap-6">
@@ -79,7 +84,7 @@ const Faq = () => {
                       <span className="flex items-center justify-center w-8 h-8 mr-3 text-blue-600 bg-blue-50 rounded-lg text-sm font-bold">
                         {index + 1}
                       </span>
-                      {faq.question}
+                      <span>{faq.question}</span>
                     </h3>
                   </div>
                   <FontAwesomeIcon
@@ -90,10 +95,12 @@ const Faq = () => {
                   />
                 </div>
               </button>
-              
+
               <div
                 className={`transition-all duration-200 ease-in-out overflow-hidden ${
-                  openIndex === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  openIndex === index
+                    ? "max-h-[500px] opacity-100"
+                    : "max-h-0 opacity-0"
                 }`}
               >
                 <div className="px-6 pb-4">

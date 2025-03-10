@@ -31,8 +31,8 @@ const getPersonalInfoById = async (req, res) => {
 const updatePersonalInfoById = async (req, res) => {
   try {
     const { userId } = req.query;
-    // console.log(userId);
-    // console.log(req.body);
+    console.log(userId);
+    console.log(req.body);
     const personalInfo = await info.findOneAndUpdate({ userId }, req.body, { new: true, runValidators: true });
     console.log(personalInfo);
     if (!personalInfo) {
