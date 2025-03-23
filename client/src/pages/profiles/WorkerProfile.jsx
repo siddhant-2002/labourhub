@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "../../utils/axios";
 import { AuthContext } from "../../context/AuthContext";
 import {
@@ -13,47 +19,45 @@ import {
   X,
   Briefcase,
   BookOpen,
-  CreditCard,
   User,
   Calendar,
   Star,
 } from "lucide-react";
+// import useJobHistory from "../../hooks/useJobHistory";
+import JobPopup from "../dashboard/JobPopup";
 
-/**
- * Enhanced WorkerProfile Component
- * Displays and manages a worker's profile information including:
- * - Personal details (name, location, contact, gender)
- * - Identity documents (Aadhar card)
- * - Educational background
- * - Skills
- * - Work experience
- * - Job history
- * - Ratings
- */
 const WorkerProfile = () => {
-  // Initial state for profile data
-  const [profile, setProfile] = useState({
-    name: "",
-    phone: "",
-    gender: "",
-    email: "",
-    address: "",
-    location: "",
-    skills: [],
-    education: "",
-    aadharcard: "",
-    experience: "",
-    jobHistory: [],
-    rating: 0,
-    photo: "",
-  });
+  // Initial state with default values
+  const initialProfile = useMemo(
+    () => ({
+      name: "",
+      phone: "",
+      gender: "",
+      email: "",
+      address: "",
+      location: "",
+      skills: [],
+      education: "",
+      aadharcard: "",
+      experience: "",
+      jobHistory: [],
+      rating: 0,
+      photo: "",
+    }),
+    []
+  );
 
-  // State for managing edit mode and form data
+  const [profile, setProfile] = useState(initialProfile);
   const [editMode, setEditMode] = useState(false);
-  const [editedProfile, setEditedProfile] = useState({});
+  const [editedProfile, setEditedProfile] = useState(initialProfile);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("personal"); // For tab navigation
+  const [activeTab, setActiveTab] = useState("personal");
+  const [photoFile, setPhotoFile] = useState(null);
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+
   const { user } = useContext(AuthContext);
 
   // Fetch profile data from the server
@@ -66,48 +70,56 @@ const WorkerProfile = () => {
 
     const userId = user?._id || user?.id;
 
-    if (!userId) {
-      setLoading(false);
-      setError("Invalid user data.");
-      return;
-    }
-
     try {
       const response = await axios.get(`/personalinfo?userId=${userId}`);
       const profileData = Array.isArray(response.data)
         ? response.data[0]
         : response.data;
 
+      // Ensure jobHistory is an array of IDs
+      const jobHistoryData = profileData?.jobHistory || [];
+
       // Combine user auth data with profile data
       const formattedProfile = {
-        name: user?.name || "", // Name from auth
+        ...initialProfile,
+        name: user?.name || "",
         gender: profileData?.gender || "",
         email: profileData?.email || user?.email || "",
         location: profileData?.location || "",
         address: profileData?.address || "",
-        aadharcard: profileData?.aadharcard || "",
-        phone: user?.phone || "", // Phone from auth
+        aadharcard: profileData?.aadharcard || null,
+        phone: user?.phone || "",
         skills: profileData?.skills || [],
         education: profileData?.education || "",
         experience: profileData?.experience || "",
-        jobHistory: profileData?.jobHistory || [],
+        jobHistory: jobHistoryData,
         rating: profileData?.rating || 0,
         photo: profileData?.photo || "",
       };
 
       setProfile(formattedProfile);
       setEditedProfile(formattedProfile);
-      setLoading(false);
     } catch (err) {
       setError("Failed to load profile information.");
+    } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, initialProfile]);
 
   // Load profile data on component mount
   useEffect(() => {
-    fetchProfileData();
-  }, [fetchProfileData]);
+    if (user) {
+      fetchProfileData();
+    }
+  }, [fetchProfileData, user]);
+
+  // const {
+  //   jobs:jobhistory,
+  //   loading:jobHistoryLoading,
+  //   error:jobHistoryError
+  // } = useJobHistory(profile.jobHistory);
+
+  // console.log("job history :", profile.jobHistory);
 
   // Handle input changes in edit mode
   const handleChange = (e) => {
@@ -129,17 +141,16 @@ const WorkerProfile = () => {
     }));
   };
 
-  // Handle job history adding
-
   // Save profile changes to the server
   const handleSave = async () => {
+    if (!user) return;
+
     try {
       setLoading(true);
       const userId = user._id || user.id;
 
       await axios.put(`/personalinfo?userId=${userId}`, editedProfile);
       setProfile(editedProfile);
-      console.log(editedProfile);
       setEditMode(false);
       alert("Profile updated successfully!");
     } catch (err) {
@@ -161,12 +172,11 @@ const WorkerProfile = () => {
     setEditMode(!editMode);
   };
 
-  // Handle photo upload
-  const [photoFile, setPhotoFile] = useState(null);
-
+  // Handle photo change
   const handlePhotoChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setPhotoFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setPhotoFile(file);
 
       // Preview the image
       const reader = new FileReader();
@@ -176,12 +186,13 @@ const WorkerProfile = () => {
           photo: event.target.result,
         }));
       };
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
     }
   };
 
+  // Upload photo to server
   const uploadPhoto = async () => {
-    if (!photoFile) return;
+    if (!photoFile || !user) return;
 
     try {
       const formData = new FormData();
@@ -199,6 +210,7 @@ const WorkerProfile = () => {
           ...prev,
           photo: response.data.photoUrl,
         }));
+        setPhotoFile(null);
         alert("Photo uploaded successfully!");
       }
     } catch (err) {
@@ -206,7 +218,17 @@ const WorkerProfile = () => {
     }
   };
 
-  // Loading state
+  const handleViewJob = (job) => {
+    setSelectedJob(job);
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedJob(null);
+  };
+
+  // // Loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -228,6 +250,9 @@ const WorkerProfile = () => {
 
   // Use edited profile in edit mode, otherwise use current profile
   const displayProfile = editMode ? editedProfile : profile;
+  console.log(displayProfile.jobHistory);
+
+  // displayProfile.jobHistory = jobhistory; // Use job history from custom hook
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -389,7 +414,7 @@ const WorkerProfile = () => {
           >
             Job History
           </button>
-          <button
+          {/* <button
             className={`px-4 py-3 flex-1 transition-all rounded-lg font-medium ${
               activeTab === "documents"
                 ? "text-white bg-gray-900 rounded-xl hover:bg-gray-800 transform scale-105"
@@ -398,7 +423,7 @@ const WorkerProfile = () => {
             onClick={() => setActiveTab("documents")}
           >
             Documents
-          </button>
+          </button> */}
         </div>
 
         {/* Personal Details Tab */}
@@ -650,23 +675,28 @@ const WorkerProfile = () => {
                   <div
                     key={index}
                     className="bg-gray-50 rounded-lg p-6 border border-gray-100 relative hover:shadow-md transition-all transform hover:scale-101"
+                    onClick={() => handleViewJob(job)} // Pass job data
                   >
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-xl font-semibold text-gray-800">
-                        {job.projectName}
+                        {job.jobTitle}
                       </h3>
                       <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 rounded-full text-sm">
-                        {job.duration || "Duration not specified"}
+                        {job.jobType || "Duration not specified"}
                       </span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="flex items-center text-gray-600">
                         <Award className="w-4 h-4 mr-2" />
-                        <span>{job.role || "Role not specified"}</span>
+                        <span>
+                          {job.jobdescription || "Role not specified"}
+                        </span>
                       </div>
                       <div className="flex items-center text-gray-600">
                         <MapPin className="w-4 h-4 mr-2" />
-                        <span>{job.location || "Location not specified"}</span>
+                        <span>
+                          {job.jobLocation || "Location not specified"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -679,55 +709,18 @@ const WorkerProfile = () => {
                   </p>
                 </div>
               )}
-            </div>
-          </div>
-        )}
 
-        {/* Documents Tab */}
-        {activeTab === "documents" && (
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <div className="flex items-center mb-6">
-              <div className="p-2 bg-pink-100 rounded-lg mr-3">
-                <CreditCard className="w-6 h-6 text-pink-500" />
-              </div>
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Identity Documents
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Aadhar Card Number
-                </label>
-                <input
-                  type="text"
-                  name="aadharcard"
-                  value={displayProfile.aadharcard}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    editMode
-                      ? "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      : "border-transparent bg-gray-50"
-                  }`}
-                  placeholder="e.g., XXXX-XXXX-XXXX"
+              {isPopupOpen && selectedJob && (
+                <JobPopup
+                  jobTitle={selectedJob.jobTitle}
+                  jobLocation={selectedJob.jobLocation}
+                  jobType={selectedJob.jobType}
+                  jobdescription={selectedJob.jobdescription}
+                  skills={selectedJob.skills}
+                  salary={selectedJob.salary}
+                  onClose={handleClosePopup}
                 />
-                <p className="mt-1 text-xs text-gray-500">
-                  Your Aadhar card helps verify your identity for jobs
-                </p>
-              </div>
-
-              {/* Placeholder for future document uploads */}
-              <div className="bg-gray-50 rounded-lg p-6 border border-dashed border-gray-300 flex flex-col items-center justify-center hover:bg-gray-100 transition-colors">
-                <div className="text-gray-400 mb-2">
-                  <CreditCard size={32} />
-                </div>
-                <p className="text-gray-500 text-center mb-1">
-                  Upload additional documents
-                </p>
-                <p className="text-xs text-gray-400 text-center">Coming soon</p>
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -750,3 +743,112 @@ const WorkerProfile = () => {
 };
 
 export default WorkerProfile;
+
+// const WorkerProfile = () => {
+//   const [profile, setProfile] = useState({
+//     name: "", phone: "", gender: "", email: "", address: "", location: "",
+//     skills: [], education: "", aadharcard: "", experience: "", jobHistory: [],
+//     rating: 0, photo: ""
+//   });
+//   const [editMode, setEditMode] = useState(false);
+//   const [editedProfile, setEditedProfile] = useState({});
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [activeTab, setActiveTab] = useState("personal");
+//   const { user } = useContext(AuthContext);
+//   const { jobs: jobhistory, loading: jobHistoryLoading, error: jobHistoryError } = useJobHistory(profile.jobHistory);
+//   const [isPopupOpen, setIsPopupOpen] = useState(false);
+//   const [photoFile, setPhotoFile] = useState(null);
+
+//   const fetchProfileData = useCallback(async () => {
+//     if (!user?.id && !user?._id) return setLoading(false), setError("User not logged in.");
+
+//     try {
+//       const response = await axios.get(`/personalinfo?userId=${user._id || user.id}`);
+//       const profileData = Array.isArray(response.data) ? response.data[0] : response.data;
+
+//       setProfile((prev) => ({
+//         ...prev,
+//         name: user?.name || "",
+//         phone: user?.phone || "",
+//         email: profileData?.email || user?.email || "",
+//         ...profileData
+//       }));
+//       setEditedProfile(profileData);
+//     } catch {
+//       setError("Failed to load profile information.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [user]);
+
+//   useEffect(() => {
+//     fetchProfileData();
+//   }, [fetchProfileData]);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setEditedProfile((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleSkillsChange = (e) => {
+//     setEditedProfile((prev) => ({ ...prev, skills: e.target.value.split(",").map(skill => skill.trim()) }));
+//   };
+
+//   const handleSave = async () => {
+//     try {
+//       setLoading(true);
+//       await axios.put(`/personalinfo?userId=${user._id || user.id}`, editedProfile);
+//       setProfile(editedProfile);
+//       setEditMode(false);
+//       alert("Profile updated successfully!");
+//     } catch (err) {
+//       alert("Failed to update profile: " + (err.response?.data?.message || err.message));
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const toggleEditMode = () => {
+//     setEditMode(!editMode);
+//     if (!editMode) setEditedProfile(profile);
+//   };
+
+//   const handlePhotoChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setPhotoFile(file);
+//       const reader = new FileReader();
+//       reader.onload = (event) => setEditedProfile((prev) => ({ ...prev, photo: event.target.result }));
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   const uploadPhoto = async () => {
+//     if (!photoFile) return;
+//     try {
+//       const formData = new FormData();
+//       formData.append("photo", photoFile);
+//       formData.append("userId", user._id || user.id);
+
+//       const response = await axios.post("/upload-profile-photo", formData, {
+//         headers: { "Content-Type": "multipart/form-data" },
+//       });
+
+//       if (response.data.photoUrl) {
+//         setEditedProfile((prev) => ({ ...prev, photo: response.data.photoUrl }));
+//         alert("Photo uploaded successfully!");
+//       }
+//     } catch {
+//       alert("Failed to upload photo.");
+//     }
+//   };
+
+//   const handleViewJob = (e) => {
+//     e.preventDefault();
+//     setIsPopupOpen(true);
+//   };
+
+//   const handleClosePopup = () => {
+//     setIsPopupOpen(false);
+//   };

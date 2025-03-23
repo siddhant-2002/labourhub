@@ -1,22 +1,51 @@
-import React, { useState } from 'react';
-import { MapPin, DollarSign, Share2 } from 'lucide-react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import JobPopup from './JobPopup';
+import React, { useState } from "react";
+import { MapPin, DollarSign, Share2 } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import JobPopup from "./JobPopup";
+import axios from "../../utils/axios";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 const JobCard = ({
+  _id,
   jobTitle,
   jobLocation,
   salary,
   jobType,
-  jobDescription,
-  skills
+  jobdescription,
+  skills,
 }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const handleApply = (e) => {
+  const { user, personalInfo } = useContext(AuthContext);
+  console.log(user);
+
+  const handleApply = async (e) => {
     e.preventDefault();
-    toast.success('Applied for job successfully');
+    try {
+      const userId = user._id || user.id;
+
+      await axios.put(`/appliedjob?userId=${userId}`, {
+        jobId: _id,
+        jobTitle: jobTitle,
+        jobLocation: jobLocation,
+        salary: salary,
+        jobType: jobType,
+        jobdescription: jobdescription,
+        skills: skills,
+      });
+
+      await axios.put(`/updateapplicant?jobId=${_id}`, {
+        name: user.name,
+        location: personalInfo.location,
+        phone: user.phone,
+      });
+
+      toast.success("Applied for job successfully");
+    } catch (err) {
+      toast.error("fail to apply job");
+    }
   };
 
   const handleShare = async (e) => {
@@ -24,11 +53,11 @@ const JobCard = ({
     try {
       await navigator.share({
         title: jobTitle,
-        text: jobDescription,
+        text: jobdescription,
         url: window.location.href,
       });
     } catch (err) {
-      console.log('Error sharing:', err);
+      console.log("Error sharing:", err);
     }
   };
 
@@ -47,7 +76,10 @@ const JobCard = ({
       {/* Grid background with gradient fade */}
       <div className="absolute inset-0  transition-opacity">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:14px_14px]"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white" style={{ top: '15%' }}></div>
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white"
+          style={{ top: "15%" }}
+        ></div>
       </div>
 
       <div className="relative p-6">
@@ -65,7 +97,7 @@ const JobCard = ({
               {jobTitle}
             </h3>
           </div>
-          
+
           <div className="flex space-x-2">
             <button
               onClick={handleShare}
@@ -74,7 +106,6 @@ const JobCard = ({
             >
               <Share2 className="w-5 h-5" />
             </button>
-            
           </div>
         </div>
 
@@ -90,13 +121,13 @@ const JobCard = ({
           </div>
         </div>
 
-        {/* Description */}
+        {/* Description
         <p className="text-gray-600 text-base leading-7 mb-6 line-clamp-2 font-inter">
-          {jobDescription}
-        </p>
+          {jobdescription}
+        </p> */}
 
         {/* Action Button */}
-        <div className='flex space-x-4'>
+        <div className="flex space-x-4">
           <button
             onClick={handleApply}
             className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
@@ -117,7 +148,7 @@ const JobCard = ({
           jobTitle={jobTitle}
           jobLocation={jobLocation}
           jobType={jobType}
-          jobDescription={jobDescription}
+          jobdescription={jobdescription}
           skills={skills}
           salary={salary}
           onClose={handleClosePopup}

@@ -14,8 +14,8 @@ const getallworkers = async (req, res) => {
 // Get personal info by user ID
 const getPersonalInfoById = async (req, res) => {
   try {
-    const {userId} = req.query;
-    const personalInfo = await info.find({ userId });    
+    const { userId } = req.query;
+    const personalInfo = await info.find({ userId });
     // console.log(userId)
     // console.log(personalInfo)
     if (!personalInfo) {
@@ -31,10 +31,13 @@ const getPersonalInfoById = async (req, res) => {
 const updatePersonalInfoById = async (req, res) => {
   try {
     const { userId } = req.query;
-    console.log(userId);
-    console.log(req.body);
-    const personalInfo = await info.findOneAndUpdate({ userId }, req.body, { new: true, runValidators: true });
-    console.log(personalInfo);
+    // console.log(userId);
+    // console.log(req.body);
+    const personalInfo = await info.findOneAndUpdate({ userId }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    // console.log(personalInfo);
     if (!personalInfo) {
       return res.status(404).json({ message: "Personal info not found" });
     }
@@ -57,9 +60,28 @@ const deletePersonalInfoById = async (req, res) => {
   }
 };
 
+const updatejobsbyid = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const data = req.body;
+    // console.log(data)
+    const personalInfo = await info.findOneAndUpdate(
+      { userId },
+      { $addToSet: { jobHistory: data } },
+      { new: true, runValidators: true }
+    );
+
+    res.json(personalInfo);
+    // console.log(personalInfo)
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getPersonalInfoById,
   updatePersonalInfoById,
   deletePersonalInfoById,
-  getallworkers
+  getallworkers,
+  updatejobsbyid,
 };

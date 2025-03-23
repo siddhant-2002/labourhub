@@ -4,11 +4,13 @@ import { Building2, MapPin, DollarSign, Clock, Users } from "lucide-react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MapPopup from "./MapPopup";
 
 const JobProvider = () => {
   const [activeSection, setActiveSection] = useState("newJob");
   const { user } = useContext(AuthContext);
 
+  const [showMap, setShowMap] = useState(false);
   const [formData, setFormData] = useState({
     providerId: user?.id || "",
     jobTitle: "",
@@ -215,6 +217,13 @@ const JobProvider = () => {
                   </div>
                 </div>
 
+                {showMap && (
+                  <MapPopup
+                    jobLocation="Your Location"
+                    onClose={() => setShowMap(false)}
+                  />
+                )}
+
                 <div className="bg-gray-50/50 backdrop-blur-sm rounded-xl border border-gray-100 p-6 space-y-6">
                   <div className="flex items-center space-x-2 mb-2">
                     <h3 className="text-sm font-bold text-gray-900">
@@ -244,7 +253,20 @@ const JobProvider = () => {
                           className="w-full p-3 pl-10 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:border-gray-300"
                         />
                       </div>
+                      <div className="mt-2 flex justify-between items-center">
+                        <p className="text-xs text-gray-500">
+                          Enter address or use map to select location
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setShowMap(true)} // ✅ Correct function call
+                          className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                        >
+                          Add Location
+                        </button>
+                      </div>
                     </div>
+
                     <div>
                       <label
                         htmlFor="salary"

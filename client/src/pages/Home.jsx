@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { Routes, Route } from "react-router-dom";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Flex from "../components/Flex";
@@ -20,14 +20,12 @@ import { AuthProvider } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import JobProvider from "./dashboard/JobProvoider";
 import translatePage from "../utils/translate";
-
-import RouteChangeListener from "../utils/routChange"; // Import the RouteChangeListener component
+import RouteChangeListener from "../utils/routChange"; // Import RouteChangeListener
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
-
   const token = sessionStorage.getItem("token");
-  const isLoggedIn = token ? true : false;
+  const isLoggedIn = !!token;
 
   let user = null;
   if (token) {
@@ -35,56 +33,51 @@ const Home = () => {
   }
 
   useEffect(() => {
-    // Simulate a loading delay
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
+    const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // const handleRouteChange = () => {
-  //   console.log('Route has changed!');
-  //   // Add your custom logic here
-  // };
+  // ✅ Memoize translatePage to prevent unnecessary re-renders
+  const handleRouteChange = useCallback(() => {
+    translatePage();
+  }, []);
 
   if (loading) {
     return <Loader />;
   }
 
   return (
-    <div className="min-h-screen ">
-      <Router>
-        <AuthProvider>
-          <RouteChangeListener onRouteChange={translatePage} /> {/* Add the RouteChangeListener component */}
-          <Header user={user} />
+    <div className="min-h-screen">
+      <AuthProvider>
+        <RouteChangeListener onRouteChange={handleRouteChange} />
+        <Header user={user} />
 
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route
-              path="/"
-              element={
-                <>
-                  <Hero isLoggedIn={isLoggedIn} />
-                  <Flex />
-                  <Video />
-                  <Faq />
-                  <Contactus />
-                </>
-              }
-            />
-            <Route path="/workerprofile" element={<WorkerProfile />} />
-            <Route path="/provoiderprofile" element={<ProviderProfile />} />
-            <Route path="/dashboard" element={<RecommendedJobs />} />
-            <Route path="/jobprovoider" element={<JobProvider />} />
-            <Route path="/about" element={<Aboutus />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/language" element={<Language />} />
-          </Routes>
-          <Footer />
-        </AuthProvider>
-      </Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero isLoggedIn={isLoggedIn} />
+                <Flex />
+                <Video />
+                <Faq />
+                <Contactus />
+              </>
+            }
+          />
+          <Route path="/workerprofile" element={<WorkerProfile />} />
+          <Route path="/provoiderprofile" element={<ProviderProfile />} />
+          <Route path="/dashboard" element={<RecommendedJobs />} />
+          <Route path="/jobprovoider" element={<JobProvider />} />
+          <Route path="/about" element={<Aboutus />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/language" element={<Language />} />
+        </Routes>
+
+        <Footer />
+      </AuthProvider>
     </div>
   );
 };

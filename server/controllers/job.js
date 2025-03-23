@@ -59,6 +59,19 @@ const deleteJob = async (req, res) => {
   }
 };
 
+const getJobById = async (req, res) => {
+  try {
+    const { jobId } = req.query;
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    res.json(job);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get recommended jobs (example implementation, adjust as needed)
 const getRecommendedJobs = async (req, res) => {
   try {
@@ -77,5 +90,6 @@ module.exports = {
   deleteJob,
   getRecommendedJobs,
   getJobByProvoiderId,
-  getalljobs
+  getalljobs,
+  getJobById
 };

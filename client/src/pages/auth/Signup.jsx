@@ -114,6 +114,27 @@ const Signup = () => {
                 </div>
 
                 <div>
+                  {/* <label htmlFor="aadhar" className="block text-sm font-medium text-gray-700 mb-1">
+                    Aadhar Card Number
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="aadhar"
+                      name="aadhar"
+                      type="number"
+                      required
+                      value={credentials.aadharcard}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3 py-2.5 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 placeholder:text-gray-400"
+                      placeholder="Enter your phone number"
+                    />
+                  </div> */}
+                </div>
+
+                <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                     Password
                   </label>

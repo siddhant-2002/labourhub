@@ -37,7 +37,7 @@ export const useRecommendedJobs = (userId) => {
       try {
         setLoading(true);
         const data = await getRecommendations(userId);
-        console.log(data)
+        // console.log(data)
         // sendSMS();
         setJobs(data);
         setError(null);

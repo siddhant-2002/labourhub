@@ -4,7 +4,7 @@ const PersonalInfo = require('../models/personalinfo'); // Adjust the path as ne
 const initializePersonalInfo = async (req, res) => {
   try {
     const userId = req.body.userId; // Assuming userId is passed in the request body
-    console.log('User ID:', userId);
+    // console.log('User ID:', userId);
 
     if (!userId) {
       return res.status(400).send({ error: 'User ID is required' });
@@ -26,11 +26,11 @@ const initializePersonalInfo = async (req, res) => {
       photo: ''
       
     });
-    console.log('Personal Info:', info);
+    // console.log('Personal Info:', info);
 
     // Save the personal info to the database
     await info.save();
-    console.log("personal info saved")
+    // console.log("personal info saved")
 
     // Check if req.newUser is set
     if (!req.newUser) {

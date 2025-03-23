@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [personalInfo,setPersonalInfo] = useState();
   const navigate = useNavigate();
 
   const login = async (phone, password) => {
@@ -21,13 +22,18 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post("/login", { phone, password });
       const { user: userData, token } = response.data;
+      // console.log("data",response.data)
 
+      const personalInfo = await axios.get(`/personalinfo?userId=${userData.id}`);
+      setPersonalInfo(personalInfo);
+      // console.log("personalinfo",personalInfo.data[0])
       // Set user state
       setUser(userData);
 
       // Store token and user data in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("personal info", JSON.stringify(personalInfo.data[0]));
 
       // Redirect to dashboard
       navigate(userData.role === "worker" ? "/dashboard" : "/jobprovoider");
@@ -45,6 +51,7 @@ export const AuthProvider = ({ children }) => {
     setError("");
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("personal info");
     navigate('/');
   };
 
@@ -61,7 +68,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, error, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, error, isLoading, personalInfo }}>
       {children}
     </AuthContext.Provider>
   );

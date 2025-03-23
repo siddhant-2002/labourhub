@@ -1,27 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { AuthProvider } from './context/AuthContext';
 
-
-// import Cookies from "js-cookie";
-// import translatePage from "./utils/translate";
-
-// const initTranslation = async () => {
-//   const selectedLanguage = Cookies.get('selectedLanguage');
-//   console.log(selectedLanguage);
-//   if (selectedLanguage) {
-//     await translatePage(selectedLanguage);
-//   }
-// };
 
 // const renderApp = async () => {
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(
-    <React.StrictMode>
-      <App className="overflow-x-hidden" />
-    </React.StrictMode>
+    <Router>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </Router>
   );
   // await initTranslation();
 // };

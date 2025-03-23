@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapPin, DollarSign, Briefcase } from 'lucide-react';
 
-const JobPopup = ({ jobTitle, jobLocation, jobType, jobDescription, skills, salary, onClose }) => {
+const JobPopup = ({ jobTitle, jobLocation, jobType, jobdescription, skills, salary, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-lg">
@@ -32,7 +32,7 @@ const JobPopup = ({ jobTitle, jobLocation, jobType, jobDescription, skills, sala
           </div>
         </div>
         <p className="text-gray-600 text-base leading-7 mb-6 font-inter">
-          {jobDescription}
+          {jobdescription}
         </p>
         <div className="flex justify-end">
           <button

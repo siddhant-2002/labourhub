@@ -16,6 +16,7 @@ export const useJobs = () => {
         const response = await axios.get(`${API_BASE_URL}/jobs/all`);
         
         setJobs(response.data);
+        // console.log(response.data);
         setTotal(response.data.length);
         setError(null);
       } catch (err) {
