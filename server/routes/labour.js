@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 // Controllers (you need to implement these)
-const { login, signup } = require("../controllers/login");
+const { login, signup, getuserbyid } = require("../controllers/login");
 const {
   getPersonalInfoById,
   updatePersonalInfoById,
   deletePersonalInfoById,
   getallworkers,
-  updatejobsbyid
+  updatejobsbyid,
 } = require("../controllers/personalinfo");
 const {
   postJob,
@@ -22,12 +22,16 @@ const {
 const initializePersonalInfo = require("../middleware/initializePersonalInfo");
 const { getRecommendations, sendSMS } = require("../controllers/recommendjobs");
 const { translate } = require("../controllers/translator");
-const {saveapplicant} = require("../controllers/jobhistory")
+const {
+  saveapplicant,
+  getapplicantbyjobid,
+} = require("../controllers/jobhistory");
 
 // Routes
 //use this for login and signup
 router.post("/login", login);
 router.post("/signup", signup, initializePersonalInfo);
+router.get("/user", getuserbyid);
 
 //personal info
 router.get("/personalinfo", getPersonalInfoById);
@@ -38,14 +42,15 @@ router.put("/personalinfo", updatePersonalInfoById);
 router.post("/job", postJob);
 router.get("/job", getJobById);
 // router.put('/job/:id',  editJob);
-// router.delete('/job/:id', deleteJob);
+router.delete("/job", deleteJob);
 
 //use this for getting jobs by provider ID
 router.get("/jobs", getJobByProvoiderId);
 
-router.put("/appliedjob",updatejobsbyid)
+router.put("/appliedjob", updatejobsbyid);
 
 router.post("/saveapplicant", saveapplicant);
+router.get("/getapplicant", getapplicantbyjobid);
 
 // //use this for getting recommended jobs for worker dashboard
 router.get("/jobs/recommended", getRecommendedJobs);

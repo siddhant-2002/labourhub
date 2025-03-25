@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { MapPin, DollarSign, Share2 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import JobPopup from "./JobPopup";
 import axios from "../../utils/axios";
-import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 const JobCard = ({
@@ -17,39 +16,63 @@ const JobCard = ({
   skills,
 }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
   const { user } = useContext(AuthContext);
-  // console.log("user",user,user.name,user.phone);
+  const [applied, setApplied] = useState(false);
 
   const handleApply = async (e) => {
     e.preventDefault();
+
+    // Ensure user is logged in
+    if (!user || (!user._id && !user.id)) {
+      toast.error("Please log in to apply for jobs.");
+      return;
+    }
+
+    // Prevent duplicate applications
+    if (applied) {
+      toast.error("You have already applied for this job.");
+      return;
+    }
+
     try {
       const userId = user._id || user.id;
 
-      await axios.put(`/appliedjob?userId=${userId}`, {
+      // First API Call - Add to applied jobs
+      const appliedResponse = await axios.put(`/appliedjob?userId=${userId}`, {
         jobId: _id,
-        jobTitle: jobTitle,
-        jobLocation: jobLocation,
-        salary: salary,
-        jobType: jobType,
-        jobdescription: jobdescription,
-        skills: skills,
+        jobTitle,
+        jobLocation,
+        salary,
+        jobType,
+        jobdescription,
+        skills,
       });
 
-      await axios.post(`/saveapplicant?userId=${userId}`, {
-        userId: userId,
+      if (appliedResponse.status !== 200) {
+        throw new Error("Failed to update applied jobs");
+      }
+
+      // Second API Call - Save applicant
+      const applicantResponse = await axios.post(`/saveapplicant?userId=${userId}`, {
+        userId,
         jobId: _id,
-        jobTitle: jobTitle,
-        jobLocation: jobLocation,
-        salary: salary,
-        jobType: jobType,
-        jobdescription: jobdescription,
-        skills: skills
+        jobTitle,
+        jobLocation,
+        salary,
+        jobType,
+        jobdescription,
+        skills,
       });
 
-      toast.success("Applied for job successfully");
+      if (applicantResponse.status !== 200) {
+        throw new Error("Failed to save applicant details");
+      }
+
+      toast.success("Applied for job successfully!");
+      setApplied(true);
     } catch (err) {
-      toast.error("fail to apply job");
+      console.error("Job Application Error:", err);
+      toast.error("Failed to apply for the job. Please try again.");
     }
   };
 
@@ -77,9 +100,9 @@ const JobCard = ({
 
   return (
     <div className="relative bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg group">
-      <ToastContainer />
+      
       {/* Grid background with gradient fade */}
-      <div className="absolute inset-0  transition-opacity">
+      <div className="absolute inset-0 transition-opacity">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:14px_14px]"></div>
         <div
           className="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white"
@@ -126,19 +149,20 @@ const JobCard = ({
           </div>
         </div>
 
-        {/* Description
-        <p className="text-gray-600 text-base leading-7 mb-6 line-clamp-2 font-inter">
-          {jobdescription}
-        </p> */}
-
         {/* Action Button */}
         <div className="flex space-x-4">
-          <button
-            onClick={handleApply}
-            className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-          >
-            Apply Now
-          </button>
+          {applied ? (
+            <span className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]">
+              Applied
+            </span>
+          ) : (
+            <button
+              onClick={handleApply}
+              className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+            >
+              Apply Now
+            </button>
+          )}
           <button
             onClick={handleViewJob}
             className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"

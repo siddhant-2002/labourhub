@@ -4,15 +4,19 @@ import { Building2, MapPin, DollarSign, Clock, Users } from "lucide-react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MapPopup from "./MapPopup";
+// import MapPopup from "./MapPopup";
+import JobApplied from "./JobApplied";
 
 const JobProvider = () => {
   const [activeSection, setActiveSection] = useState("newJob");
   const { user } = useContext(AuthContext);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
+  // const [showMap, setShowMap] = useState(false);
+  const [jobHistory, setJobHistory] = useState([]);
 
-  const [isopen, setIsOpen] = useState(false);
-
-  const [showMap, setShowMap] = useState(false);
+  // Fix: Initialize formData correctly
   const [formData, setFormData] = useState({
     providerId: user?.id || "",
     jobTitle: "",
@@ -23,60 +27,89 @@ const JobProvider = () => {
     salary: 0,
   });
 
-  const [jobHistory, setJobHistory] = useState([]);
+  // console.log("jobhistory", jobHistory);
+
+  /** Optimized: Fetch Job History */
+  // const lastFetchedUserId = useRef(null);
 
   const fetchJobHistory = useCallback(async () => {
-    if (!user) {
-      return;
-    }
+    if (!user?.id) return; // Prevent API call if user ID is not available
 
     try {
-      const response = await axios.get(
+      const { data } = await axios.get(
         `http://localhost:3000/jobs?providerId=${user.id}`
       );
-      setJobHistory(response.data.reverse());
+      setJobHistory(data.reverse());
     } catch (err) {
+      console.error("Error fetching job history:", err);
       toast.error("Error fetching job history. Please try again.");
-      console.error("error:", err);
     }
-  }, [user]);
+  }, [user?.id]); // Only recreate the function if user.id changes
 
   useEffect(() => {
     if (activeSection === "jobHistory") {
       fetchJobHistory();
     }
-  }, [activeSection, fetchJobHistory]);
+  }, [activeSection, fetchJobHistory]); // Safe dependency handling
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  /** Optimized: Handle Input Change */
+  const handleChange = ({ target: { name, value } }) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  /** Optimized: Handle Job Submission */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dataToSend = {
+
+    const formattedData = {
       ...formData,
-      skills: formData.skills.split(",").map((skill) => skill.trim()), // Convert skills to array
+      skills: formData.skills
+        .split(",")
+        .map((skill) => skill.trim()) // Trim spaces
+        .filter((skill) => skill), // Remove empty strings
     };
+
     try {
-      await axios.post("http://localhost:3000/job", dataToSend);
+      await axios.post("http://localhost:3000/job", formattedData);
       toast.success("Job posted successfully!");
-      setFormData({
-        providerId: user?.id || "",
+      setFormData((prev) => ({
+        ...prev,
         jobTitle: "",
         jobLocation: "",
         jobType: "",
         jobdescription: "",
         skills: "",
         salary: 0,
-      });
+      })); // Preserve providerId
     } catch (err) {
+      console.error("Error posting job:", err);
       toast.error("Error posting job. Please try again.");
-      console.error("error:", err);
     }
+  };
+
+  /** Optimized: View Job Details */
+  const handleViewDetails = useCallback(async (job) => {
+    setSelectedJob(job);
+    console.log("job :", job);
+    console.log("job.id :", job._id);
+    try {
+      const data = await axios.get(
+        `http://localhost:3000/getapplicant?jobId=${job._id}`
+      );
+      console.log("data :", data);
+      setSelectedApplicant(data.data);
+    } catch (err) {
+      console.error("Error fetching applicants:", err);
+    }
+
+    setShowPopup(true);
+  }, []);
+
+  /** Optimized: Close Popup */
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedJob(null);
+    setSelectedApplicant(null);
   };
 
   if (!user) {
@@ -219,12 +252,12 @@ const JobProvider = () => {
                   </div>
                 </div>
 
-                {showMap && (
+                {/* {showMap && (
                   <MapPopup
                     jobLocation="Your Location"
                     onClose={() => setShowMap(false)}
                   />
-                )}
+                )} */}
 
                 <div className="bg-gray-50/50 backdrop-blur-sm rounded-xl border border-gray-100 p-6 space-y-6">
                   <div className="flex items-center space-x-2 mb-2">
@@ -261,7 +294,7 @@ const JobProvider = () => {
                         </p>
                         <button
                           type="button"
-                          onClick={() => setShowMap(true)} // ✅ Correct function call
+                          // onClick={() => setShowMap(true)} // ✅ Correct function call
                           className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                         >
                           Add Location
@@ -389,8 +422,10 @@ const JobProvider = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-4">
-                      
-                      <button className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                      <button
+                        onClick={() => handleViewDetails(job)}
+                        className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                      >
                         View Job
                       </button>
                     </div>
@@ -416,6 +451,14 @@ const JobProvider = () => {
                   </div>
                 </div>
               ))}
+
+              {showPopup && (
+                <JobApplied
+                  job={selectedJob}
+                  applicant={selectedApplicant}
+                  onClose={handleClosePopup}
+                />
+              )}
             </div>
           )}
         </div>

@@ -328,7 +328,7 @@ const ProvoiderProfile = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+        {/* <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="text-3xl font-bold text-gray-900">
@@ -355,12 +355,12 @@ const ProvoiderProfile = () => {
               <div className="mt-1 text-sm text-gray-600">Rating</div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Tab Navigation */}
         <div className="bg-white rounded-xl shadow-lg p-2 sm:p-4 lg:p-6 mb-8 flex flex-col sm:flex-row overflow-x-auto border border-gray-100">
           <button
-            className={`px-4 py-3 flex-1 transition-all rounded-lg font-medium ${
+            className={`px-4 py-3 flex-1 transition-all rounded-lg font-medium overflow-x-hidden ${
               activeTab === "personal"
                 ? "text-white bg-gray-900 rounded-xl hover:bg-gray-800 transform scale-105"
                 : "text-gray-600 hover:bg-gray-100"

@@ -21,6 +21,7 @@ import { jwtDecode } from "jwt-decode";
 import JobProvider from "./dashboard/JobProvoider";
 import translatePage from "../utils/translate";
 import RouteChangeListener from "../utils/routChange"; // Import RouteChangeListener
+import ShowProfile from "./profiles/ShowProfile";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -67,6 +68,7 @@ const Home = () => {
               </>
             }
           />
+          <Route path="/profile" element={<ShowProfile />} />
           <Route path="/workerprofile" element={<WorkerProfile />} />
           <Route path="/provoiderprofile" element={<ProviderProfile />} />
           <Route path="/dashboard" element={<RecommendedJobs />} />
