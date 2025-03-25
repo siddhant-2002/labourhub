@@ -18,8 +18,8 @@ const JobCard = ({
 }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const { user, personalInfo } = useContext(AuthContext);
-  console.log(user);
+  const { user } = useContext(AuthContext);
+  // console.log("user",user,user.name,user.phone);
 
   const handleApply = async (e) => {
     e.preventDefault();
@@ -36,10 +36,15 @@ const JobCard = ({
         skills: skills,
       });
 
-      await axios.put(`/updateapplicant?jobId=${_id}`, {
-        name: user.name,
-        location: personalInfo.location,
-        phone: user.phone,
+      await axios.post(`/saveapplicant?userId=${userId}`, {
+        userId: userId,
+        jobId: _id,
+        jobTitle: jobTitle,
+        jobLocation: jobLocation,
+        salary: salary,
+        jobType: jobType,
+        jobdescription: jobdescription,
+        skills: skills
       });
 
       toast.success("Applied for job successfully");

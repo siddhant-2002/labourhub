@@ -1,15 +1,14 @@
 const mongoose = require("mongoose");
 
-const applicantSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  location: { type: String, required: true },
-  phone: { type: String, required: true },
-});
-
 const jobHistorySchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true
+  },
+  jobId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
     required: true
   },
   jobTitle: { type: String, required: true },
@@ -17,11 +16,8 @@ const jobHistorySchema = new mongoose.Schema({
   jobType: { type: String, required: true },
   jobdescription: { type: String, required: true },
   skills: { type: [String], required: true },
-  salary: { type: Number, required: true },
-  applicants: {
-    type: [applicantSchema], // Changed to an array of applicantSchema
-    default: [] // Default to an empty array
-  }
+  salary: { type: Number, required: true }
+ 
 });
 
 const JobHistory = mongoose.model("JobHistory", jobHistorySchema);

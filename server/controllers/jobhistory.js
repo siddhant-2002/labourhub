@@ -1,35 +1,39 @@
 const jobHistory = require("../models/jobhistory");
 
-const updateapplicant = async (req, res) => {
+const saveapplicant = async (req, res) => {
   try {
-    const { jobId } = req.query;
-    console.log("Received jobId:", jobId);
+    const { userId } = req.query;
+    // console.log("Received userId:", userId);
     const data = req.body;
-    console.log("Received data:", data);
+    // console.log("Received data:", data);
 
-    if (!jobId) {
-      return res.status(400).json({ message: "jobId is required" });
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
     }
 
-    const applicant = await jobHistory.findOneAndUpdate(
-      { jobId },
-      { $addToSet: { applicants: data } }, // Updated field name to applicants
-      { new: true, runValidators: true }
-    );
+    // Create a new job history entry for the applicant
+    const newJobHistory = new jobHistory({
+      userId: userId,
+      jobId: data.jobId,
+      jobTitle: data.jobTitle,
+      jobLocation: data.jobLocation,
+      jobType: data.jobType,
+      jobdescription: data.jobdescription,
+      skills: data.skills,
+      salary: data.salary
+    });
 
-    console.log("Updated applicant:", applicant);
+    const savedJobHistory = await newJobHistory.save();
 
-    if (!applicant) {
-      return res.status(404).json({ message: "Job not found" });
-    }
+    // console.log("Saved job history:", savedJobHistory);
 
-    res.json(applicant);
+    res.json(savedJobHistory);
   } catch (error) {
-    console.error("Error updating applicant:", error);
+    console.error("Error saving job history:", error);
     res.status(400).json({ message: error.message });
   }
 };
 
 module.exports = {
-  updateapplicant,
+  saveapplicant,
 };

@@ -10,6 +10,8 @@ const JobProvider = () => {
   const [activeSection, setActiveSection] = useState("newJob");
   const { user } = useContext(AuthContext);
 
+  const [isopen, setIsOpen] = useState(false);
+
   const [showMap, setShowMap] = useState(false);
   const [formData, setFormData] = useState({
     providerId: user?.id || "",
@@ -387,9 +389,7 @@ const JobProvider = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-4">
-                      <button className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                        Edit
-                      </button>
+                      
                       <button className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                         View Job
                       </button>

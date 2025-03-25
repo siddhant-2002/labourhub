@@ -22,7 +22,7 @@ const {
 const initializePersonalInfo = require("../middleware/initializePersonalInfo");
 const { getRecommendations, sendSMS } = require("../controllers/recommendjobs");
 const { translate } = require("../controllers/translator");
-const {updateapplicant} = require("../controllers/jobhistory")
+const {saveapplicant} = require("../controllers/jobhistory")
 
 // Routes
 //use this for login and signup
@@ -45,7 +45,7 @@ router.get("/jobs", getJobByProvoiderId);
 
 router.put("/appliedjob",updatejobsbyid)
 
-router.put("/updateapplicant", updateapplicant);
+router.post("/saveapplicant", saveapplicant);
 
 // //use this for getting recommended jobs for worker dashboard
 router.get("/jobs/recommended", getRecommendedJobs);

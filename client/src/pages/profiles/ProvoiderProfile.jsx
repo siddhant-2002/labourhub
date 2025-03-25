@@ -139,7 +139,7 @@ const ProvoiderProfile = () => {
 
       await axios.put(`/personalinfo?userId=${userId}`, editedProfile);
       setProfile(editedProfile);
-      console.log(editedProfile);
+      // console.log(editedProfile);
       setEditMode(false);
       alert("Profile updated successfully!");
     } catch (err) {

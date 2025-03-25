@@ -64,7 +64,7 @@ const updatejobsbyid = async (req, res) => {
   try {
     const { userId } = req.query;
     const data = req.body;
-    // console.log(data)
+    console.log(data)
     const personalInfo = await info.findOneAndUpdate(
       { userId },
       { $addToSet: { jobHistory: data } },
