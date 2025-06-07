@@ -1,28 +1,40 @@
+/**
+ * JobCard Component
+ * Displays individual job listings with details and application functionality
+ * Handles job applications, sharing, and viewing detailed job information
+ */
+
 import React, { useState, useContext } from "react";
 import { MapPin, DollarSign, Share2 } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import JobPopup from "./JobPopup";
-import axios from "../../utils/axios";
+import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
 const JobCard = ({
-  _id,
-  jobTitle,
-  jobLocation,
-  salary,
-  jobType,
-  jobdescription,
-  skills,
+  _id, // Unique identifier for the job
+  jobTitle, // Title of the job position
+  jobLocation, // Location details of the job
+  salary, // Salary/compensation for the position
+  jobType, // Type of employment (full-time, part-time, etc.)
+  jobdescription, // Detailed description of the job
+  skills, // Required skills for the position
 }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const { user } = useContext(AuthContext);
-  const [applied, setApplied] = useState(false);
+  // State management
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // Controls job details popup visibility
+  const { user } = useContext(AuthContext); // Get current user from auth context
+  const [applied, setApplied] = useState(false); // Tracks if user has applied to this job
+  // const userId = user._id || user.id;
 
+  /**
+   * Handles the job application process
+   * Makes API calls to update applied jobs and save applicant details
+   */
   const handleApply = async (e) => {
     e.preventDefault();
 
-    // Ensure user is logged in
+    // Validate user authentication
     if (!user || (!user._id && !user.id)) {
       toast.error("Please log in to apply for jobs.");
       return;
@@ -37,32 +49,38 @@ const JobCard = ({
     try {
       const userId = user._id || user.id;
 
-      // First API Call - Add to applied jobs
-      const appliedResponse = await axios.put(`/appliedjob?userId=${userId}`, {
-        jobId: _id,
-        jobTitle,
-        jobLocation,
-        salary,
-        jobType,
-        jobdescription,
-        skills,
-      });
+      // Update user's applied jobs list
+      const appliedResponse = await axios.put(
+        `http://localhost:3000/appliedjob?userId=${userId}`,
+        {
+          jobId: _id,
+          jobTitle,
+          jobLocation: jobLocation?.address || "N/A",
+          salary,
+          jobType,
+          jobdescription,
+          skills,
+        }
+      );
 
       if (appliedResponse.status !== 200) {
         throw new Error("Failed to update applied jobs");
       }
 
-      // Second API Call - Save applicant
-      const applicantResponse = await axios.post(`/saveapplicant?userId=${userId}`, {
-        userId,
-        jobId: _id,
-        jobTitle,
-        jobLocation,
-        salary,
-        jobType,
-        jobdescription,
-        skills,
-      });
+      // Save applicant details for the job provider
+      const applicantResponse = await axios.post(
+        `http://localhost:3000/saveapplicant?userId=${userId}`,
+        {
+          userId,
+          jobId: _id,
+          jobTitle,
+          jobLocation: jobLocation?.address || "N/A",
+          salary,
+          jobType,
+          jobdescription,
+          skills,
+        }
+      );
 
       if (applicantResponse.status !== 200) {
         throw new Error("Failed to save applicant details");
@@ -70,12 +88,18 @@ const JobCard = ({
 
       toast.success("Applied for job successfully!");
       setApplied(true);
+
+
     } catch (err) {
       console.error("Job Application Error:", err);
       toast.error("Failed to apply for the job. Please try again.");
     }
   };
 
+  
+  /**
+   * Handles sharing job details using Web Share API
+   */
   const handleShare = async (e) => {
     e.preventDefault();
     try {
@@ -89,18 +113,23 @@ const JobCard = ({
     }
   };
 
+  /**
+   * Opens the job details popup
+   */
   const handleViewJob = (e) => {
     e.preventDefault();
     setIsPopupOpen(true);
   };
 
+  /**
+   * Closes the job details popup
+   */
   const handleClosePopup = () => {
     setIsPopupOpen(false);
   };
 
   return (
     <div className="relative bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg group">
-      
       {/* Grid background with gradient fade */}
       <div className="absolute inset-0 transition-opacity">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:14px_14px]"></div>
@@ -141,7 +170,9 @@ const JobCard = ({
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex items-center text-gray-600">
             <MapPin className="w-4 h-4 mr-2" />
-            <span className="text-sm font-inter">{jobLocation}</span>
+            <span className="text-sm font-inter">
+              {jobLocation?.address || "N/A"}
+            </span>
           </div>
           <div className="flex items-center text-gray-600">
             <DollarSign className="w-4 h-4 mr-2" />
@@ -175,7 +206,7 @@ const JobCard = ({
       {isPopupOpen && (
         <JobPopup
           jobTitle={jobTitle}
-          jobLocation={jobLocation}
+          jobLocation={jobLocation?.address || "N/A"}
           jobType={jobType}
           jobdescription={jobdescription}
           skills={skills}

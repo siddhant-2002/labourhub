@@ -1,3 +1,9 @@
+/**
+ * Applied Jobs Model Schema
+ * Tracks jobs that users have applied to
+ * Maintains a record of job applications for both workers and providers
+ */
+
 const mongoose = require("mongoose");
 
 const appliedJobsSchema = new mongoose.Schema({
@@ -12,6 +18,15 @@ const appliedJobsSchema = new mongoose.Schema({
   jobdescription: { type: String, required: true },
   skills: { type: [String], required: true },
   salary: { type: Number, required: true },
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "rejected"],
+    default: "pending",
+  },
+  appliedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const AppliedJobs = mongoose.model("AppliedJobs", appliedJobsSchema);

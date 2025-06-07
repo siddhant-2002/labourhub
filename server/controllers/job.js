@@ -1,18 +1,32 @@
+/**
+ * Job Controller
+ * Handles all job-related operations including CRUD operations and job recommendations
+ */
+
 const Job = require("../models/job");
 
-// Create a new job
+/**
+ * Create a new job posting
+ * @param {Object} req - Request object containing job details
+ * @param {Object} res - Response object
+ */
 const postJob = async (req, res) => {
   try {
     const job = new Job(req.body);
     // console.log(job)
     await job.save();
-    
+
     res.status(201).json(job);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
+/**
+ * Get all available jobs
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ */
 const getalljobs = async (req, res) => {
   try {
     const jobs = await Job.find();
@@ -23,10 +37,17 @@ const getalljobs = async (req, res) => {
   }
 };
 
-// Edit an existing job
+/**
+ * Edit an existing job posting
+ * @param {Object} req - Request object containing job ID and updated details
+ * @param {Object} res - Response object
+ */
 const editJob = async (req, res) => {
   try {
-    const job = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const job = await Job.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
@@ -36,6 +57,11 @@ const editJob = async (req, res) => {
   }
 };
 
+/**
+ * Get all jobs posted by a specific provider
+ * @param {Object} req - Request object containing provider ID
+ * @param {Object} res - Response object
+ */
 const getJobByProvoiderId = async (req, res) => {
   const { providerId } = req.query;
   try {
@@ -46,7 +72,12 @@ const getJobByProvoiderId = async (req, res) => {
     res.status(500).json({ message: "Error fetching jobs by provider ID" });
   }
 };
-// Delete a job
+
+/**
+ * Delete a job posting
+ * @param {Object} req - Request object containing job ID
+ * @param {Object} res - Response object
+ */
 const deleteJob = async (req, res) => {
   try {
     const job = await Job.findByIdAndDelete(req.params.id);
@@ -59,6 +90,11 @@ const deleteJob = async (req, res) => {
   }
 };
 
+/**
+ * Get job details by ID
+ * @param {Object} req - Request object containing job ID
+ * @param {Object} res - Response object
+ */
 const getJobById = async (req, res) => {
   try {
     const { jobId } = req.query;
@@ -72,7 +108,11 @@ const getJobById = async (req, res) => {
   }
 };
 
-// Get recommended jobs (example implementation, adjust as needed)
+/**
+ * Get recommended jobs based on user skills
+ * @param {Object} req - Request object containing user skills
+ * @param {Object} res - Response object
+ */
 const getRecommendedJobs = async (req, res) => {
   try {
     const { skills } = req.query;
@@ -91,5 +131,5 @@ module.exports = {
   getRecommendedJobs,
   getJobByProvoiderId,
   getalljobs,
-  getJobById
+  getJobById,
 };

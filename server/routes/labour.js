@@ -1,7 +1,13 @@
+/**
+ * Labour Hub API Routes
+ * This file contains all the API routes for the Labour Hub application
+ * Routes are organized by functionality: authentication, jobs, user profiles, etc.
+ */
+
 const express = require("express");
 const router = express.Router();
 
-// Controllers (you need to implement these)
+// Import controllers for different functionalities
 const { login, signup, getuserbyid } = require("../controllers/login");
 const {
   getPersonalInfoById,
@@ -27,40 +33,44 @@ const {
   getapplicantbyjobid,
 } = require("../controllers/jobhistory");
 
-// Routes
-//use this for login and signup
-router.post("/login", login);
-router.post("/signup", signup, initializePersonalInfo);
-router.get("/user", getuserbyid);
+const { postLocation, getLocation } = require("../controllers/location");
 
-//personal info
-router.get("/personalinfo", getPersonalInfoById);
-router.put("/personalinfo", updatePersonalInfoById);
-// router.delete("/personalinfo/:id", deletePersonalInfoById);
+// Authentication Routes
+router.post("/login", login); // User login
+router.post("/signup", signup, initializePersonalInfo); // User registration with personal info initialization
+router.get("/user", getuserbyid); // Get user details by ID
 
-//use this for posting, editing and deleting provided jobs in provider dashboard
-router.post("/job", postJob);
-router.get("/job", getJobById);
-// router.put('/job/:id',  editJob);
-router.delete("/job", deleteJob);
+// Personal Information Routes
+router.get("/personalinfo", getPersonalInfoById); // Get user's personal information
+router.put("/personalinfo", updatePersonalInfoById); // Update user's personal information
+// router.delete("/personalinfo/:id", deletePersonalInfoById); // Delete user's personal information (commented out)
 
-//use this for getting jobs by provider ID
-router.get("/jobs", getJobByProvoiderId);
+// Job Management Routes
+router.post("/job", postJob); // Create a new job posting
+router.get("/job", getJobById); // Get job details by ID
+// router.put('/job/:id',  editJob); // Edit job details (commented out)
+router.delete("/job", deleteJob); // Delete a job posting
 
-router.put("/appliedjob", updatejobsbyid);
+// Job Provider Routes
+router.get("/jobs", getJobByProvoiderId); // Get all jobs posted by a provider
+router.put("/appliedjob", updatejobsbyid); // Update job application status
 
-router.post("/saveapplicant", saveapplicant);
-router.get("/getapplicant", getapplicantbyjobid);
+// Applicant Management Routes
+router.post("/saveapplicant", saveapplicant); // Save applicant details for a job
+router.get("/getapplicant", getapplicantbyjobid); // Get applicant details for a specific job
 
-// //use this for getting recommended jobs for worker dashboard
-router.get("/jobs/recommended", getRecommendedJobs);
-router.get("/jobs/all", getalljobs);
-router.get("/workers/all", getallworkers);
+// Job Listing Routes
+router.get("/jobs/recommended", getRecommendedJobs); // Get recommended jobs for a user
+router.get("/jobs/all", getalljobs); // Get all available jobs
+router.get("/workers/all", getallworkers); // Get all registered workers
 
-//use this for getting recommended jobs for worker dashboard
-router.post("/recommend", getRecommendations);
-router.post("/send_sms", sendSMS);
+// Additional Features
+router.post("/recommend", getRecommendations); // Get job recommendations
+router.post("/send_sms", sendSMS); // Send SMS notifications
+router.post("/translate", translate); // Handle text translation
 
-router.post("/translate", translate);
+// Location Services (commented out)
+// router.post("/location",postLocation); // Update user location
+// router.get('/location', getLocation); // Get user location
 
 module.exports = router;

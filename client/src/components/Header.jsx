@@ -2,11 +2,15 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useLocation } from "react-router-dom";
 import ProfileDropdown from "./ProfileDropdown";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isLanguagePopupOpen, setIsLanguagePopupOpen] = useState(false); // State for language popup
   const location = useLocation();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const { user, login } = useContext(AuthContext);
 
@@ -20,11 +24,29 @@ const Header = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const languageCodes = {
+    Hindi: "hi",
+    English: "en",
+  };
+
+  const handleLanguageClick = (language) => {
+    const languageCode = languageCodes[language]; // Get the ISO 639-1 code
+    if (languageCode) {
+      Cookies.set("selectedLanguage", languageCode); // Set cookie without 'expires' to make it a session cookie
+      navigate("/"); // Use navigate to redirect to the home page
+      window.location.reload(); // Reload the page to apply the new language
+    }
+  };
+
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "/about", label: "About" },
     { path: "/features", label: "Features" },
-    { path: "/language", label: "Language" },
+    {
+      path: "#",
+      label: "Language",
+      onClick: () => setIsLanguagePopupOpen(true),
+    }, // Add onClick for Language
   ];
 
   return (
@@ -80,6 +102,7 @@ const Header = () => {
               <Link
                 key={link.path}
                 to={link.path}
+                onClick={link.onClick} // Handle onClick for Language
                 className={`relative text-base font-medium transition-all duration-200 hover:text-gray-900 group ${
                   isActive(link.path) ? "text-gray-900" : "text-gray-600"
                 }`}
@@ -129,6 +152,7 @@ const Header = () => {
               <Link
                 key={link.path}
                 to={link.path}
+                onClick={link.onClick} // Handle onClick for Language
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
                   isActive(link.path) ? "text-gray-900" : "text-gray-600"
                 }`}
@@ -155,6 +179,45 @@ const Header = () => {
                 </Link>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Language Popup */}
+      {isLanguagePopupOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-semibold mb-4">Select Language</h2>
+            <ul className="space-y-2">
+              <li>
+                <button
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                  onClick={() => {
+                    handleLanguageClick("English");
+                    setIsLanguagePopupOpen(false);
+                  }}
+                >
+                  English
+                </button>
+              </li>
+              <li>
+                <button
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                  onClick={() => {
+                    handleLanguageClick("Hindi");
+                    setIsLanguagePopupOpen(false);
+                  }}
+                >
+                  Hindi
+                </button>
+              </li>
+            </ul>
+            <button
+              className="mt-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
+              onClick={() => setIsLanguagePopupOpen(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

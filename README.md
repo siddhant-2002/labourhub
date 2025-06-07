@@ -101,4 +101,6 @@ PORT=5000
 ---
 
 
+localhost 6000 for translate
+localhost 5000 for recommendation
 

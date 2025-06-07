@@ -12,21 +12,22 @@ export const AuthProvider = ({ children }) => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [personalInfo,setPersonalInfo] = useState();
+  const [personalInfo, setPersonalInfo] = useState();
   const navigate = useNavigate();
 
   const login = async (phone, password) => {
-    setError("");
+    setError(""); // Clear error state when login starts
     setIsLoading(true);
 
     try {
       const response = await axios.post("/login", { phone, password });
       const { user: userData, token } = response.data;
-      // console.log("data",response.data)
+      // console.log("data", response.data);
 
       const personalInfo = await axios.get(`/personalinfo?userId=${userData.id}`);
       setPersonalInfo(personalInfo);
-      // console.log("personalinfo",personalInfo.data[0])
+      // console.log("personalinfo", personalInfo.data[0]);
+
       // Set user state
       setUser(userData);
 
@@ -39,7 +40,8 @@ export const AuthProvider = ({ children }) => {
       navigate(userData.role === "worker" ? "/dashboard" : "/jobprovoider");
       return true;
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred during login. Please try again.");
+      setError(err.response?.data?.message);
+      console.error("Login error:", err); // Log the error for debugging
       return false;
     } finally {
       setIsLoading(false);

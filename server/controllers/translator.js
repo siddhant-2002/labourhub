@@ -16,7 +16,7 @@ const translate = async (req, res) => {
       textArray.map(async (text) => {
         try {
           const response = await axios.post(
-            `http://127.0.0.1:5000/translate`,
+            `http://127.0.0.1:6000/translate`,
             {
               q: text,
 		          source: "auto",
@@ -26,7 +26,7 @@ const translate = async (req, res) => {
           // console.log(response.data);
           return response.data.translatedText;
         } catch (error) {
-          console.error('Translation error:', error);
+          // console.error('Translation error:', error);
           return text; // fallback to original text if error occurs
         }
       })
@@ -34,7 +34,7 @@ const translate = async (req, res) => {
 
     res.json({ translatedTexts: translations });
   } catch (error) {
-    console.error("Error translating:", error);
+    // console.error("Error translating:", error);
     res.status(500).json({ error: "Translation failed" });
   }
 };

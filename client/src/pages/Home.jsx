@@ -49,6 +49,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
+      {/* <RouteCalculator/> */}
       <AuthProvider>
         <RouteChangeListener onRouteChange={handleRouteChange} />
         <Header user={user} />
@@ -68,7 +69,7 @@ const Home = () => {
               </>
             }
           />
-          <Route path="/profile" element={<ShowProfile />} />
+          <Route path="/profile/:userId" element={<ShowProfile />} />
           <Route path="/workerprofile" element={<WorkerProfile />} />
           <Route path="/provoiderprofile" element={<ProviderProfile />} />
           <Route path="/dashboard" element={<RecommendedJobs />} />

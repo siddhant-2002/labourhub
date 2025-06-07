@@ -40,6 +40,7 @@ export const useRecommendedJobs = (userId) => {
         // console.log(data)
         // sendSMS();
         setJobs(data);
+        console.log(data)
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch recommended jobs');

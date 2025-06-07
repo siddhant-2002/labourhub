@@ -4,29 +4,36 @@ import { Building2, MapPin, DollarSign, Clock, Users } from "lucide-react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import MapPopup from "./MapPopup";
+import HereMapComponent from "./HereMapComponent";
 import JobApplied from "./JobApplied";
 
 const JobProvider = () => {
   const [activeSection, setActiveSection] = useState("newJob");
   const { user } = useContext(AuthContext);
   const [showPopup, setShowPopup] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [selectedApplicant, setSelectedApplicant] = useState(null);
-  // const [showMap, setShowMap] = useState(false);
   const [jobHistory, setJobHistory] = useState([]);
+
+  const [jobLocation, setJobLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+    address: "",
+  });
 
   // Fix: Initialize formData correctly
   const [formData, setFormData] = useState({
     providerId: user?.id || "",
     jobTitle: "",
-    jobLocation: "",
+    jobLocation: jobLocation, // Use address for display
     jobType: "",
     jobdescription: "",
     skills: "",
     salary: 0,
   });
 
+  // console.log("formData", formData);
   // console.log("jobhistory", jobHistory);
 
   /** Optimized: Fetch Job History */
@@ -53,8 +60,12 @@ const JobProvider = () => {
   }, [activeSection, fetchJobHistory]); // Safe dependency handling
 
   /** Optimized: Handle Input Change */
-  const handleChange = ({ target: { name, value } }) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   /** Optimized: Handle Job Submission */
@@ -75,7 +86,7 @@ const JobProvider = () => {
       setFormData((prev) => ({
         ...prev,
         jobTitle: "",
-        jobLocation: "",
+        jobLocation: {}, // Reset location to default
         jobType: "",
         jobdescription: "",
         skills: "",
@@ -110,6 +121,25 @@ const JobProvider = () => {
     setShowPopup(false);
     setSelectedJob(null);
     setSelectedApplicant(null);
+  };
+
+  const handleLocationSelect = ({ location, address }) => {
+    // console.log(location, address);
+
+    const updatedLocation = {
+      latitude: location.lat,
+      longitude: location.lng,
+      address: address,
+    };
+
+    setJobLocation(updatedLocation);
+    // console.log("Updated Location:", updatedLocation);
+
+    // Also update the formData state
+    setFormData((prev) => ({
+      ...prev,
+      jobLocation: updatedLocation,
+    }));
   };
 
   if (!user) {
@@ -252,12 +282,12 @@ const JobProvider = () => {
                   </div>
                 </div>
 
-                {/* {showMap && (
-                  <MapPopup
-                    jobLocation="Your Location"
+                {showMap && (
+                  <HereMapComponent
                     onClose={() => setShowMap(false)}
+                    onLocationSelect={handleLocationSelect}
                   />
-                )} */}
+                )}
 
                 <div className="bg-gray-50/50 backdrop-blur-sm rounded-xl border border-gray-100 p-6 space-y-6">
                   <div className="flex items-center space-x-2 mb-2">
@@ -277,16 +307,11 @@ const JobProvider = () => {
                       </label>
                       <div className="relative group">
                         <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-hover:text-gray-500 transition-colors duration-200" />
-                        <input
-                          type="text"
-                          id="jobLocation"
-                          name="jobLocation"
-                          placeholder="e.g. Mumbai, Maharashtra"
-                          required
-                          value={formData.jobLocation}
-                          onChange={handleChange}
-                          className="w-full p-3 pl-10 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:border-gray-300"
-                        />
+
+                        <div className="w-full h-12 p-3 pl-10 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:border-gray-300">
+                          {formData.jobLocation.address ||
+                            "Select location on map"}
+                        </div>
                       </div>
                       <div className="mt-2 flex justify-between items-center">
                         <p className="text-xs text-gray-500">
@@ -294,7 +319,7 @@ const JobProvider = () => {
                         </p>
                         <button
                           type="button"
-                          // onClick={() => setShowMap(true)} // ✅ Correct function call
+                          onClick={() => setShowMap(true)} // ✅ Correct function call
                           className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                         >
                           Add Location
@@ -434,7 +459,7 @@ const JobProvider = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div className="flex items-center text-gray-600">
                       <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-                      <span>{job.jobLocation}</span>
+                      <span>{job.jobLocation?.address || "NA"}</span>
                     </div>
                     <div className="flex items-center text-gray-600">
                       <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
@@ -444,20 +469,22 @@ const JobProvider = () => {
                       <Clock className="w-4 h-4 mr-2 text-gray-400" />
                       <span>{job.jobType}</span>
                     </div>
-                    <div className="flex items-center text-gray-600">
-                      <Users className="w-4 h-4 mr-2 text-gray-400" />
-                      <span>{job.applicants?.length || 0} Applicants</span>
-                    </div>
                   </div>
                 </div>
               ))}
 
               {showPopup && (
-                <JobApplied
-                  job={selectedJob}
-                  applicant={selectedApplicant}
-                  onClose={handleClosePopup}
-                />
+                <>
+                  {console.log("Popup should show!", {
+                    selectedJob,
+                    selectedApplicant,
+                  })}
+                  <JobApplied
+                    job={selectedJob}
+                    applicant={selectedApplicant}
+                    onClose={handleClosePopup}
+                  />
+                </>
               )}
             </div>
           )}

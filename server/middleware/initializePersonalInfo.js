@@ -15,7 +15,7 @@ const initializePersonalInfo = async (req, res) => {
       userId: userId,
       gender: '',
       email: '',
-      location: '',
+      location: {},
       address: '',
       aadharcard: req.body.aadharcard && req.body.aadharcard.trim() !== "" ? req.body.aadharcard : null,
       skills: [],

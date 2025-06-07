@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import axios from "../../utils/axios";
 // import { AuthContext } from "../../context/AuthContext";
 import {
@@ -13,7 +14,7 @@ import {
   Calendar,
   Star,
 } from "lucide-react";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 
 const ShowProfile = () => {
   // Initial state with default values
@@ -37,7 +38,7 @@ const ShowProfile = () => {
   );
 
   const [profile, setProfile] = useState(initialProfile);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("personal");
 
@@ -46,17 +47,21 @@ const ShowProfile = () => {
   // const user = newuser;
   // console.log(user);
 
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const userId = params.get("userId");
-
+  // const location = useLocation();
+  const { userId } = useParams();
+console.log("User ID from URL:", userId);
+  console.log("User ID from URL:", userId);
   // Fetch profile data from the server
   const fetchProfileData = useCallback(async () => {
     try {
-      setLoading(true); // Ensure loading state resets
-
+      // setLoading(true); // Ensure loading state resets
+      console.log("User ID inside showprofile:", userId);
       const response = await axios.get(`/personalinfo?userId=${userId}`);
       const userResponse = await axios.get(`/user?userId=${userId}`);
+      
+      console.log("Profile Response:", response.data);
+      console.log("User Response:", userResponse.data);
+
 
       const userData = userResponse.data;
       // setnewuser(userData); // Save user data
@@ -70,7 +75,6 @@ const ShowProfile = () => {
         name: userData?.name || "",
         gender: profileData?.gender || "",
         email: profileData?.email || userData?.email || "",
-        location: profileData?.location || "",
         address: profileData?.address || "",
         aadharcard: profileData?.aadharcard || null,
         phone: userData?.phone || "",
@@ -87,7 +91,7 @@ const ShowProfile = () => {
     } catch (err) {
       setError("Failed to load profile information.");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   }, [initialProfile, userId]);
 
@@ -99,13 +103,13 @@ const ShowProfile = () => {
   }, [fetchProfileData, userId]);
 
   // // Loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  //     </div>
+  //   );
+  // }
 
   // Error state
   if (error) {
@@ -120,7 +124,7 @@ const ShowProfile = () => {
 
   // Use edited profile in edit mode, otherwise use current profile
   const displayProfile = profile;
-  console.log(displayProfile.jobHistory);
+  // console.log(displayProfile.jobHistory);
 
   // displayProfile.jobHistory = jobhistory; // Use job history from custom hook
 
@@ -166,12 +170,12 @@ const ShowProfile = () => {
                 </div>
 
                 <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="flex items-center text-gray-600 p-2 bg-gray-50 rounded-lg">
+                  {/* <div className="flex items-center text-gray-600 p-2 bg-gray-50 rounded-lg">
                     <MapPin className="w-4 h-4 mr-2 text-blue-500" />
                     <span>
                       {displayProfile.location || "Add your location"}
                     </span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center text-gray-600 p-2 bg-gray-50 rounded-lg">
                     <Mail className="w-4 h-4 mr-2 text-blue-500" />
                     <span>{displayProfile.email || "Add your email"}</span>
@@ -252,7 +256,6 @@ const ShowProfile = () => {
           >
             Job History
           </button>
-          
         </div>
 
         {/* Personal Details Tab */}
@@ -293,9 +296,9 @@ const ShowProfile = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Gender
                 </label>
-                
+
                 <span className="border-transparent bg-gray-50 w-full px-4 py-3 rounded-lg border">
-                {displayProfile.gender}
+                  {displayProfile.gender}
                 </span>
               </div>
               <div>
@@ -339,10 +342,9 @@ const ShowProfile = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Educational Background
                   </label>
-          
 
                   <span className="border-transparent bg-gray-50 w-full px-4 py-3 rounded-lg border">
-                  {displayProfile.education}
+                    {displayProfile.education}
                   </span>
                 </div>
               </div>
@@ -360,7 +362,7 @@ const ShowProfile = () => {
                     Skills
                   </h2>
                 </div>
-                
+
                 <div className="mt-4 flex flex-wrap gap-2">
                   {displayProfile.skills?.map((skill, index) => (
                     <span
@@ -387,9 +389,9 @@ const ShowProfile = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Years of Experience
                   </label>
-                  
+
                   <span className="w-full px-4 py-3 rounded-lg border">
-                  {displayProfile.experience}
+                    {displayProfile.experience}
                   </span>
                 </div>
               </div>

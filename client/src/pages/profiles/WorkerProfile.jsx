@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 // import useJobHistory from "../../hooks/useJobHistory";
 import JobPopup from "../dashboard/JobPopup";
+import HereMapComponent from "../dashboard/HereMapComponent";
 
 const WorkerProfile = () => {
   // Initial state with default values
@@ -57,6 +58,8 @@ const WorkerProfile = () => {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [showMap, setShowMap] = useState(false);
+  // const [Location, setLocation] = useState(null);
 
   const { user } = useContext(AuthContext);
 
@@ -78,6 +81,7 @@ const WorkerProfile = () => {
 
       // Ensure jobHistory is an array of IDs
       const jobHistoryData = profileData?.jobHistory || [];
+      // console.log(jobHistoryData)
 
       // Combine user auth data with profile data
       const formattedProfile = {
@@ -85,7 +89,7 @@ const WorkerProfile = () => {
         name: user?.name || "",
         gender: profileData?.gender || "",
         email: profileData?.email || user?.email || "",
-        location: profileData?.location || "",
+        location: profileData?.location.address || "",
         address: profileData?.address || "",
         aadharcard: profileData?.aadharcard || null,
         phone: user?.phone || "",
@@ -113,21 +117,15 @@ const WorkerProfile = () => {
     }
   }, [fetchProfileData, user]);
 
-  // const {
-  //   jobs:jobhistory,
-  //   loading:jobHistoryLoading,
-  //   error:jobHistoryError
-  // } = useJobHistory(profile.jobHistory);
-
-  // console.log("job history :", profile.jobHistory);
-
   // Handle input changes in edit mode
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditedProfile((prev) => ({
       ...prev,
       [name]: value,
+      
     }));
+    
   };
 
   // Handle skills input with comma separation
@@ -138,6 +136,30 @@ const WorkerProfile = () => {
     setEditedProfile((prev) => ({
       ...prev,
       skills: skillsArray,
+    }));
+
+  };
+
+  const handleLocationSelect = ({ location, address }) => {
+    const updatedLocation = {
+      latitude: location.lat,
+      longitude: location.lng,
+      address: address,
+    };
+  
+    // setLocation(updatedLocation); // Update the Location state
+    setEditedProfile((prev) => ({
+      ...prev,
+      location: updatedLocation, // Use updatedLocation directly
+    }));
+    console.log("Updated Profile:", {
+      ...editedProfile,
+      location: updatedLocation,
+    });
+
+    setProfile((prev) => ({
+      ...prev,
+      location: updatedLocation,
     }));
   };
 
@@ -237,6 +259,7 @@ const WorkerProfile = () => {
     );
   }
 
+
   // Error state
   if (error) {
     return (
@@ -250,7 +273,7 @@ const WorkerProfile = () => {
 
   // Use edited profile in edit mode, otherwise use current profile
   const displayProfile = editMode ? editedProfile : profile;
-  console.log(displayProfile.jobHistory);
+  // console.log(displayProfile.jobHistory);
 
   // displayProfile.jobHistory = jobhistory; // Use job history from custom hook
 
@@ -331,7 +354,7 @@ const WorkerProfile = () => {
                   <div className="flex items-center text-gray-600 p-2 bg-gray-50 rounded-lg">
                     <MapPin className="w-4 h-4 mr-2 text-blue-500" />
                     <span>
-                      {displayProfile.location || "Add your location"}
+                      {displayProfile.location.address || "Add your location"}
                     </span>
                   </div>
                   <div className="flex items-center text-gray-600 p-2 bg-gray-50 rounded-lg">
@@ -426,6 +449,13 @@ const WorkerProfile = () => {
           </button> */}
         </div>
 
+        {showMap && (
+          <HereMapComponent
+            onClose={() => setShowMap(false)}
+            onLocationSelect={handleLocationSelect}
+          />
+        )}
+
         {/* Personal Details Tab */}
         {activeTab === "personal" && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
@@ -510,18 +540,17 @@ const WorkerProfile = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   City/Location
                 </label>
-                <input
-                  type="text"
-                  name="location"
-                  value={displayProfile.location}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    editMode
-                      ? "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      : "border-transparent bg-gray-50"
-                  }`}
-                />
+                <button
+                  type="button"
+                  onClick={() => setShowMap(true)} // ✅ Correct function call
+                  className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                >
+                  Add Location
+                </button>
+
+                <div className="w-full px-4 py-3 rounded-lg border">
+                  {displayProfile.location.address}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -671,7 +700,7 @@ const WorkerProfile = () => {
             <div className="space-y-6">
               {displayProfile.jobHistory &&
               displayProfile.jobHistory.length > 0 ? (
-                displayProfile.jobHistory.map((job, index) => (
+                displayProfile.jobHistory.reverse().map((job, index) => (
                   <div
                     key={index}
                     className="bg-gray-50 rounded-lg p-6 border border-gray-100 relative hover:shadow-md transition-all transform hover:scale-101"
@@ -743,112 +772,3 @@ const WorkerProfile = () => {
 };
 
 export default WorkerProfile;
-
-// const WorkerProfile = () => {
-//   const [profile, setProfile] = useState({
-//     name: "", phone: "", gender: "", email: "", address: "", location: "",
-//     skills: [], education: "", aadharcard: "", experience: "", jobHistory: [],
-//     rating: 0, photo: ""
-//   });
-//   const [editMode, setEditMode] = useState(false);
-//   const [editedProfile, setEditedProfile] = useState({});
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [activeTab, setActiveTab] = useState("personal");
-//   const { user } = useContext(AuthContext);
-//   const { jobs: jobhistory, loading: jobHistoryLoading, error: jobHistoryError } = useJobHistory(profile.jobHistory);
-//   const [isPopupOpen, setIsPopupOpen] = useState(false);
-//   const [photoFile, setPhotoFile] = useState(null);
-
-//   const fetchProfileData = useCallback(async () => {
-//     if (!user?.id && !user?._id) return setLoading(false), setError("User not logged in.");
-
-//     try {
-//       const response = await axios.get(`/personalinfo?userId=${user._id || user.id}`);
-//       const profileData = Array.isArray(response.data) ? response.data[0] : response.data;
-
-//       setProfile((prev) => ({
-//         ...prev,
-//         name: user?.name || "",
-//         phone: user?.phone || "",
-//         email: profileData?.email || user?.email || "",
-//         ...profileData
-//       }));
-//       setEditedProfile(profileData);
-//     } catch {
-//       setError("Failed to load profile information.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   }, [user]);
-
-//   useEffect(() => {
-//     fetchProfileData();
-//   }, [fetchProfileData]);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setEditedProfile((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   const handleSkillsChange = (e) => {
-//     setEditedProfile((prev) => ({ ...prev, skills: e.target.value.split(",").map(skill => skill.trim()) }));
-//   };
-
-//   const handleSave = async () => {
-//     try {
-//       setLoading(true);
-//       await axios.put(`/personalinfo?userId=${user._id || user.id}`, editedProfile);
-//       setProfile(editedProfile);
-//       setEditMode(false);
-//       alert("Profile updated successfully!");
-//     } catch (err) {
-//       alert("Failed to update profile: " + (err.response?.data?.message || err.message));
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const toggleEditMode = () => {
-//     setEditMode(!editMode);
-//     if (!editMode) setEditedProfile(profile);
-//   };
-
-//   const handlePhotoChange = (e) => {
-//     const file = e.target.files[0];
-//     if (file) {
-//       setPhotoFile(file);
-//       const reader = new FileReader();
-//       reader.onload = (event) => setEditedProfile((prev) => ({ ...prev, photo: event.target.result }));
-//       reader.readAsDataURL(file);
-//     }
-//   };
-
-//   const uploadPhoto = async () => {
-//     if (!photoFile) return;
-//     try {
-//       const formData = new FormData();
-//       formData.append("photo", photoFile);
-//       formData.append("userId", user._id || user.id);
-
-//       const response = await axios.post("/upload-profile-photo", formData, {
-//         headers: { "Content-Type": "multipart/form-data" },
-//       });
-
-//       if (response.data.photoUrl) {
-//         setEditedProfile((prev) => ({ ...prev, photo: response.data.photoUrl }));
-//         alert("Photo uploaded successfully!");
-//       }
-//     } catch {
-//       alert("Failed to upload photo.");
-//     }
-//   };
-
-//   const handleViewJob = (e) => {
-//     e.preventDefault();
-//     setIsPopupOpen(true);
-//   };
-
-//   const handleClosePopup = () => {
-//     setIsPopupOpen(false);
-//   };

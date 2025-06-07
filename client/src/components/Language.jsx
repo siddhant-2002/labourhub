@@ -4,21 +4,7 @@ import Cookies from "js-cookie";
 // Mapping of language names to their ISO 639-1 codes
 const languageCodes = {
   "Hindi": "hi",
-  "Bengali": "bn",
-  "Telugu": "te",
-  "Marathi": "mr",
-  "Tamil": "ta",
-  "Urdu": "ur",
-  "Gujarati": "gu",
-  "Kannada": "kn",
-  "Odia": "or",
-  "Malayalam": "ml",
-  "Punjabi": "pa",
-  "Assamese": "as",
-  "Kashmiri": "ks",
-  "Nepali": "ne",
-  "Sindhi": "sd",
-  "Meitei (Manipuri)": "mni",
+  "English": "en",
 };
 
 const LanguageSelector = () => {

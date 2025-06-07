@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import translatePage from "../utils/translate";
 import {
   faMapMarkerAlt,
   faPhoneAlt,
@@ -31,6 +32,10 @@ const Contactus = () => {
       color: "bg-yellow-50", // Light yellow background for this info
     },
   ];
+
+  useEffect(() => {
+    translatePage();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

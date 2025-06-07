@@ -1,58 +1,91 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const targetLanguage = Cookies.get("selectedLanguage");
+const targetLanguage = Cookies.get("selectedLanguage") || "en";
+let translationCache = new Map(); // Cache translations
 
-const translatePage = async () => {
+// Function to add a loading indicator
+const addLoadingIndicator = (element) => {
+  if (!element.dataset.originalText) {
+    element.dataset.originalText = element.textContent; // Store original text
+  }
+  element.dataset.loading = "true";
+  element.textContent = `⏳ ${element.dataset.originalText}`; // Show loading
+};
+
+// Function to remove loading indicator
+const removeLoadingIndicator = (element, translatedText) => {
+  element.textContent = translatedText;
+  delete element.dataset.loading; // Remove loading flag
+};
+
+// Function to translate a single element
+const translateElement = async (element) => {
+  const originalText = element.dataset.originalText || element.textContent.trim();
+
+  if (!originalText || originalText.length <= 1) return; // Skip short texts
+
+  // If already translated, apply directly
+  if (translationCache.has(originalText)) {
+    removeLoadingIndicator(element, translationCache.get(originalText));
+    return;
+  }
+
+  addLoadingIndicator(element); // Show loading
+
+  try {
+    const response = await axios.post("http://localhost:3000/translate", {
+      textArray: [originalText],
+      targetLanguage,
+    });
+
+    const translatedText = response.data.translatedTexts[0];
+
+    if (translatedText) {
+      translationCache.set(originalText, translatedText); // Store in cache
+      removeLoadingIndicator(element, translatedText); // Remove loading and set translation
+    }
+  } catch (error) {
+    console.error("Translation error:", error);
+    element.textContent = originalText; // Revert to original text on failure
+  }
+};
+
+// Function to scan and translate the page
+const translatePage = () => {
   const elements = document.querySelectorAll(
     "p, h1, h2, h3, h4, h5, h6, span, div, section, article, li, a, button, label"
   );
 
-  // console.log(elements);
-  let textMap = new Map(); // Unique text -> elements
-  let uniqueTexts = new Set(); // Use Set to store unique text values
-
-  Array.from(elements).forEach((el) => {
-    if (el.children.length === 0) {
-      // Check if the element is a leaf element
-      const text = el.textContent?.trim();
-      if (text && text.length > 1) {
-        if (!textMap.has(text)) textMap.set(text, []); // Store text if not already present
-        textMap.get(text).push(el); // Associate elements with this text
-        uniqueTexts.add(text); // Add text to Set
-      }
+  elements.forEach((element) => {
+    if (element.children.length === 0 && !element.dataset.translating) {
+      element.dataset.translating = "true"; // Mark as processing
+      translateElement(element);
     }
   });
-
-  const uniqueTextArray = Array.from(uniqueTexts); // Convert Set to Array
-
-  if (uniqueTextArray.length === 0) {
-    console.warn("No text extracted from the page.");
-    return;
-  }
-
-  try {
-    const response = await axios.post("http://localhost:3000/translate", {
-      textArray: uniqueTextArray, // Send only unique texts
-      targetLanguage,
-    });
-
-    const translatedTexts = response.data.translatedTexts;
-
-    uniqueTextArray.forEach((originalText, index) => {
-      const translatedText = translatedTexts[index];
-      textMap.get(originalText).forEach((element) => {
-        element.textContent = translatedText; // Replace all occurrences of the original text
-      });
-    });
-  } catch (error) {
-    console.error("Translation error:", error);
-  }
 };
 
-// Run after page load
+// **Use MutationObserver to Translate New Content**
+const observeDOMChanges = () => {
+  const observer = new MutationObserver((mutationsList) => {
+    mutationsList.forEach((mutation) => {
+      if (mutation.type === "childList" || mutation.type === "characterData") {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            translatePage(); // Translate new elements instantly
+          }
+        });
+      }
+    });
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+};
+
+// **Run on Page Load and Observe Changes**
 window.onload = () => {
-  translatePage("hi"); // Change language as needed
+  translatePage();
+  observeDOMChanges();
 };
 
 export default translatePage;
