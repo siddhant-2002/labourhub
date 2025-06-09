@@ -16,12 +16,20 @@ const user = require("../models/user");
 const saveapplicant = async (req, res) => {
   try {
     const { userId } = req.query;
-    // console.log("Received userId:", userId);
     const data = req.body;
-    // console.log("Received data:", data);
+    // console.log("data:", data);
 
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
+    }
+
+    // Check if user has already applied for any job
+    const existingApplication = await jobHistory.findOne({
+      userId: userId,
+    });
+    // console.log("existingApplication:", existingApplication);
+    if (existingApplication) {
+      return res.status(409).json({ message: "you already applied to a job" });
     }
 
     // Create a new job history entry for the applicant
@@ -35,10 +43,9 @@ const saveapplicant = async (req, res) => {
       skills: data.skills,
       salary: data.salary,
     });
+    // console.log("newJobHistory:", newJobHistory);
 
     const savedJobHistory = await newJobHistory.save();
-
-    // console.log("Saved job history:", savedJobHistory);
 
     res.json(savedJobHistory);
   } catch (error) {
@@ -97,7 +104,29 @@ const getapplicantbyjobid = async (req, res) => {
   }
 };
 
+const deleteapplicantbyjobid = async (req, res) => {
+  try {
+    const { jobId } = req.query;
+
+    if (!jobId) {
+      return res.status(400).json({ message: "jobId is required" });
+    }
+
+    const { ObjectId } = require("mongodb");
+    const result = await jobHistory.deleteOne({ jobId: new ObjectId(jobId) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "No application found for this jobId" });
+    }
+
+    res.json({ message: "Application deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting applicant by jobId:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 module.exports = {
   saveapplicant,
   getapplicantbyjobid,
+  deleteapplicantbyjobid
 };

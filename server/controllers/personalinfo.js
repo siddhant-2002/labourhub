@@ -47,6 +47,8 @@ const updatePersonalInfoById = async (req, res) => {
   }
 };
 
+
+
 // Delete personal info by ID
 const deletePersonalInfoById = async (req, res) => {
   try {
@@ -62,18 +64,26 @@ const deletePersonalInfoById = async (req, res) => {
 
 const updatejobsbyid = async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { userId } = req.body;
     const data = req.body;
-    console.log(data)
+    // console.log("Request received - userId:", userId);
+    // console.log("Request body data:", data);
+
     const personalInfo = await info.findOneAndUpdate(
       { userId },
       { $addToSet: { jobHistory: data } },
       { new: true, runValidators: true }
     );
+    // console.log("Updated personalInfo:", personalInfo);
+
+    if (!personalInfo) {
+      console.log("No personal info found for userId:", userId);
+      return res.status(404).json({ message: "Personal info not found" });
+    }
 
     res.json(personalInfo);
-    // console.log(personalInfo)
   } catch (error) {
+    console.log("Error in updatejobsbyid:", error);
     res.status(400).json({ message: error.message });
   }
 };

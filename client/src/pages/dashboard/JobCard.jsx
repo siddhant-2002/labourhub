@@ -1,9 +1,3 @@
-/**
- * JobCard Component
- * Displays individual job listings with details and application functionality
- * Handles job applications, sharing, and viewing detailed job information
- */
-
 import React, { useState, useContext } from "react";
 import { MapPin, DollarSign, Share2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -20,11 +14,21 @@ const JobCard = ({
   jobType, // Type of employment (full-time, part-time, etc.)
   jobdescription, // Detailed description of the job
   skills, // Required skills for the position
+  status,
 }) => {
   // State management
   const [isPopupOpen, setIsPopupOpen] = useState(false); // Controls job details popup visibility
   const { user } = useContext(AuthContext); // Get current user from auth context
-  const [applied, setApplied] = useState(false); // Tracks if user has applied to this job
+  // const [applied, setApplied] = useState(false); // Tracks if user has applied to this job
+
+  console.log("Job Status:", status); // Debug log
+
+  // Don't render the card if status is accept or completed
+  if (status === "accepted" || status === "completed") {
+    console.log("Not rendering card due to status:", status); // Debug log
+    return null;
+  }
+
   // const userId = user._id || user.id;
 
   /**
@@ -41,31 +45,39 @@ const JobCard = ({
     }
 
     // Prevent duplicate applications
-    if (applied) {
-      toast.error("You have already applied for this job.");
-      return;
-    }
+    // if (applied) {
+    //   toast.error("You have already applied for this job.");
+    //   return;
+    // }
 
     try {
       const userId = user._id || user.id;
 
       // Update user's applied jobs list
-      const appliedResponse = await axios.put(
-        `http://localhost:3000/appliedjob?userId=${userId}`,
-        {
-          jobId: _id,
-          jobTitle,
-          jobLocation: jobLocation?.address || "N/A",
-          salary,
-          jobType,
-          jobdescription,
-          skills,
-        }
-      );
+      // const appliedResponse = await axios.put(
+      //   `http://localhost:3000/appliedjob?userId=${userId}`,
+      //   {
+      //     jobId: _id,
+      //     jobTitle,
+      //     jobLocation: jobLocation?.address || "N/A",
+      //     salary,
+      //     jobType,
+      //     jobdescription,
+      //     skills,
+      //   }
+      // );
 
-      if (appliedResponse.status !== 200) {
-        throw new Error("Failed to update applied jobs");
-      }
+      // if (appliedResponse.status !== 200) {
+      //   throw new Error("Failed to update applied jobs");
+      // }
+      // console.log("userId:", userId);
+      // console.log("jobId:", _id);
+      // console.log("jobTitle:", jobTitle);
+      // console.log("jobLocation:", jobLocation?.address || "N/A");
+      // console.log("salary:", salary);
+      // console.log("jobType:", jobType);
+      // console.log("jobdescription:", jobdescription);
+      // console.log("skills:", skills);
 
       // Save applicant details for the job provider
       const applicantResponse = await axios.post(
@@ -87,16 +99,20 @@ const JobCard = ({
       }
 
       toast.success("Applied for job successfully!");
-      setApplied(true);
-
-
+      // setApplied(true);
     } catch (err) {
-      console.error("Job Application Error:", err);
-      toast.error("Failed to apply for the job. Please try again.");
+      // console.error("Job Application Error:", err);
+      if (err.response?.data?.message === "Already applied for this job") {
+        toast.error("You have already applied for this job.");
+        return;
+      }
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to apply for job. Please try again."
+      );
     }
   };
 
-  
   /**
    * Handles sharing job details using Web Share API
    */
@@ -182,18 +198,13 @@ const JobCard = ({
 
         {/* Action Button */}
         <div className="flex space-x-4">
-          {applied ? (
-            <span className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]">
-              Applied
-            </span>
-          ) : (
-            <button
-              onClick={handleApply}
-              className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-            >
-              Apply Now
-            </button>
-          )}
+          <button
+            onClick={handleApply}
+            className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+          >
+            Apply Now
+          </button>
+
           <button
             onClick={handleViewJob}
             className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"

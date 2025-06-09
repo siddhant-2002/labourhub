@@ -17,6 +17,9 @@ const RecommendedJobs = () => {
 
   const { jobs, loading, error, total } = useJobs();
   const { jobs: recommendedJobs, loading: recLoading } = useRecommendedJobs(userId);
+  // console.log("recommendedJobs :", recommendedJobs);
+  // console.log("jobs :", jobs);
+
   
   if (error) {
     return (

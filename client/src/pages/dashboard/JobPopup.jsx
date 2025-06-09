@@ -6,9 +6,11 @@
 
 import React from "react";
 import { MapPin, DollarSign, Briefcase } from "lucide-react";
+import axios from "axios";
 // import LocationMap from '../profiles/LocationMap'; // Adjust the import path as necessary
 
 const JobPopup = ({
+  jobId,
   jobTitle, // Title of the job position
   jobLocation, // Location details of the job
   jobType, // Type of employment
@@ -16,6 +18,7 @@ const JobPopup = ({
   skills, // Required skills for the position
   salary, // Salary/compensation for the position
   onClose, // Function to close the popup
+  calling,
 }) => {
   /**
    * Opens the job location in Google Maps
@@ -26,6 +29,18 @@ const JobPopup = ({
     )}`;
     window.open(mapUrl, "_blank");
   };
+
+  const handleCall = async () => {
+    try {
+      await axios.delete("http://localhost:3000/job", {
+        params: { jobId }, // Correct way to send query param
+      });
+      onClose(); // Close the popup after successful deletion
+    } catch (error) {
+      console.error("Error deleting job:", error.response?.data || error.message);
+    }
+  };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -92,6 +107,14 @@ const JobPopup = ({
             Close
           </button>
         </div>
+        
+          <button
+            onClick={handleCall}
+            className="px-6 py-3 text-lg font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-all duration-200"
+          >
+            Rating
+          </button>
+        
       </div>
     </div>
   );

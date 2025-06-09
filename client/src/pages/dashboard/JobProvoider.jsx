@@ -15,6 +15,7 @@ const JobProvider = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [selectedApplicant, setSelectedApplicant] = useState(null);
   const [jobHistory, setJobHistory] = useState([]);
+  const [status, setStatus] = useState(null);
 
   const [jobLocation, setJobLocation] = useState({
     latitude: 0,
@@ -81,20 +82,39 @@ const JobProvider = () => {
     };
 
     try {
-      await axios.post("http://localhost:3000/job", formattedData);
-      toast.success("Job posted successfully!");
-      setFormData((prev) => ({
-        ...prev,
-        jobTitle: "",
-        jobLocation: {}, // Reset location to default
-        jobType: "",
-        jobdescription: "",
-        skills: "",
-        salary: 0,
-      })); // Preserve providerId
+      const response = await axios.post(
+        "http://localhost:3000/job",
+        formattedData
+      );
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Job posted successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setFormData((prev) => ({
+          ...prev,
+          jobTitle: "",
+          jobLocation: {}, // Reset location to default
+          jobType: "",
+          jobdescription: "",
+          skills: "",
+          salary: 0,
+        })); // Preserve providerId
+      }
     } catch (err) {
       console.error("Error posting job:", err);
-      toast.error("Error posting job. Please try again.");
+      toast.error("Error posting job. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
   };
 
@@ -107,6 +127,13 @@ const JobProvider = () => {
       const data = await axios.get(
         `http://localhost:3000/getapplicant?jobId=${job._id}`
       );
+
+      const status = await axios.get(
+        `http://localhost:3000/job?jobId=${job._id}`
+      );
+
+      setStatus(status.data.status);
+      console.log("status :", status.data.status);
       console.log("data :", data);
       setSelectedApplicant(data.data);
     } catch (err) {
@@ -148,7 +175,17 @@ const JobProvider = () => {
 
   return (
     <section className="pt-10">
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="relative pt-14">
         {/* Grid background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
@@ -481,6 +518,7 @@ const JobProvider = () => {
                   })}
                   <JobApplied
                     job={selectedJob}
+                    status={status}
                     applicant={selectedApplicant}
                     onClose={handleClosePopup}
                   />

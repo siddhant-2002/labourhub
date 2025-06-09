@@ -4,6 +4,7 @@
  */
 
 const Job = require("../models/job");
+const axios = require("axios");
 
 /**
  * Create a new job posting
@@ -15,6 +16,23 @@ const postJob = async (req, res) => {
     const job = new Job(req.body);
     // console.log(job)
     await job.save();
+
+    // Notify eligible workers through the ML service
+    try {
+      console.log("Calling notification service...");
+      const response = await axios.post(
+        "http://localhost:5000/notify_workers",
+        {
+          job_id: job._id,
+          job_data: job.toObject(), // Send the complete job data
+        }
+      );
+      console.log("Notification service response:", response.data);
+    } catch (error) {
+      console.error("Error notifying workers:", error.message);
+      console.error("Error details:", error.response?.data || error);
+      // Don't fail the job creation if notification fails
+    }
 
     res.status(201).json(job);
   } catch (error) {
@@ -44,16 +62,28 @@ const getalljobs = async (req, res) => {
  */
 const editJob = async (req, res) => {
   try {
-    const job = await Job.findByIdAndUpdate(req.params.id, req.body, {
+    const { jobId } = req.params;
+    const { status } = req.body;
+
+    if (!jobId) {
+      return res.status(400).json({ message: "Job ID is required" });
+    }
+
+    const updateData = status ? { status } : req.body;
+
+    const job = await Job.findByIdAndUpdate(jobId, updateData, {
       new: true,
       runValidators: true,
     });
+
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
-    res.json(job);
+
+    res.status(200).json(job);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error updating job:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -80,10 +110,18 @@ const getJobByProvoiderId = async (req, res) => {
  */
 const deleteJob = async (req, res) => {
   try {
-    const job = await Job.findByIdAndDelete(req.params.id);
+    const { jobId } = req.query;
+
+    if (!jobId) {
+      return res.status(400).json({ message: "Missing jobId in query" });
+    }
+
+    const job = await Job.findByIdAndDelete(jobId);
+
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
+
     res.json({ message: "Job deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

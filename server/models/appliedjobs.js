@@ -23,10 +23,7 @@ const appliedJobsSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "rejected"],
     default: "pending",
   },
-  appliedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  
 });
 
 const AppliedJobs = mongoose.model("AppliedJobs", appliedJobsSchema);

@@ -5,26 +5,41 @@ from twilio.rest import Client
 import os
 import json
 from dotenv import load_dotenv
+import time
 
 load_dotenv()
 app = Flask(__name__)
 
-# Backend API URLs - updated to match your Express routes
+# Backend API URLs
 WORKERS_API_URL = 'http://localhost:3000/workers/all'
 JOBS_API_URL = 'http://localhost:3000/jobs/all'
+WORKER_API_URL = 'http://localhost:3000/user'
+JOB_API_URL = 'http://localhost:3000/job'
 
 # Twilio Configuration
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 
+print("Twilio Configuration:")
+print(f"Account SID: {'Set' if TWILIO_ACCOUNT_SID else 'Not Set'}")
+print(f"Auth Token: {'Set' if TWILIO_AUTH_TOKEN else 'Not Set'}")
+print(f"Phone Number: {TWILIO_PHONE_NUMBER}")
+
 # Initialize Twilio client
 twilio_client = None
 if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
     try:
         twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        print("Twilio client initialized successfully")
+        
+        # Test the client by getting account info
+        account = twilio_client.api.accounts(TWILIO_ACCOUNT_SID).fetch()
+        print(f"Connected to Twilio account: {account.friendly_name}")
     except Exception as e:
         print(f"Twilio client initialization error: {e}")
+else:
+    print("Twilio credentials not found in environment variables")
 
 def fetch_workers():
     """Fetch all workers from the backend API"""
@@ -47,21 +62,24 @@ def fetch_jobs():
         return []
 
 def get_worker_by_id(worker_id):
-    """Get worker details by ID from the API"""
-    workers = fetch_workers()
-    for worker in workers:
-        if str(worker.get('_id')) == str(worker_id):
-            return worker
+    """Fetch worker details from the backend API"""
+    try:
+        response = requests.get(f"{WORKER_API_URL}?userId={worker_id}")
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error fetching worker: {e}")
     return None
 
 def get_job_by_id(job_id):
-    """Get job details by ID from the API"""
-    jobs = fetch_jobs()
-    for job in jobs:
-        if str(job.get('_id')) == str(job_id):
-            return job
+    """Fetch job details from the backend API"""
+    try:
+        response = requests.get(f"{JOB_API_URL}?jobId={job_id}")
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error fetching job: {e}")
     return None
-
 
 @app.route('/')
 def index():
@@ -106,32 +124,70 @@ def recommend():
         # Get job recommendations
         recommended_jobs = recommend_jobs(selected_worker, jobs)
         
-        # Add country code +91 if not present
+        # Get worker's phone number
         phone_number = selected_worker.get('phone')
-        if not phone_number.startswith('+'):
-            phone_number = '+91' + phone_number
-            
-        # Send SMS for each recommended job
-        for job in recommended_jobs[:3]:  # Limit to top 3 recommendations
-            try:
-                message = twilio_client.messages.create(
-                    body=f"New Job Recommendation:\n"
-                         f"Title: {job.get('jobTitle', 'N/A')}\n"
-                         f"Location: {job.get('jobLocation', 'N/A')}\n"
-                         f"Salary: {job.get('salary', 'N/A')}\n"
-                         f"Description: {job.get('jobdescription', 'N/A')}",
-                    from_=TWILIO_PHONE_NUMBER,
-                    to=phone_number
-                )
-                print(f"SMS sent for job {job.get('_id', 'N/A')}: {message.sid}")
-            except Exception as e:
-                print(f"Error sending SMS for job {job.get('_id', 'N/A')}: {e}")
+        if phone_number:
+            # Format phone number
+            formatted_phone = validate_phone_number(phone_number)
+            if formatted_phone:
+                # Send separate SMS for each recommended job
+                for job in recommended_jobs[:3]:  # Limit to top 3 recommendations
+                    try:
+                        # Get job provider details
+                        job_provider = job.get('jobProvider', {})
+                        provider_phone = job_provider.get('phone', 'N/A')
+                        
+                        # Format shorter message for each job
+                        message_body = (
+                            f"JOB #{recommended_jobs.index(job) + 1}\n"
+                            f"{job.get('jobTitle', 'N/A')}\n"
+                            f"📍{job.get('jobLocation', {}).get('address', 'N/A')}\n"
+                            f"💰₹{job.get('salary', 'N/A')}\n"
+                            f"📞{provider_phone}\n"
+                            f"Reply MORE for details"
+                        )
+                        
+                        print(f"Sending message for job {job.get('_id', 'N/A')}")
+                        print(f"Message content: {message_body}")
+                        
+                        # Send message using Twilio
+                        message = twilio_client.messages.create(
+                            body=message_body,
+                            from_=TWILIO_PHONE_NUMBER,
+                            to=formatted_phone
+                        )
+                        print(f"Message sent successfully! SID: {message.sid}")
+                        
+                        # Add a small delay between messages
+                        time.sleep(1)
+                        
+                    except Exception as e:
+                        print(f"Error sending SMS for job {job.get('_id', 'N/A')}: {e}")
                 
         return jsonify(recommended_jobs)
         
     except Exception as e:
         print(f"Recommendation error: {e}")
         return jsonify({"error": str(e)}), 500
+
+def validate_phone_number(phone):
+    """Validate and format phone number for Twilio"""
+    try:
+        # Remove any non-digit characters
+        digits = ''.join(filter(str.isdigit, phone))
+        
+        # If number starts with 91, remove it
+        if digits.startswith('91'):
+            digits = digits[2:]
+            
+        # If number doesn't start with +, add +91
+        if not phone.startswith('+'):
+            return f'+91{digits}'
+            
+        return phone
+    except Exception as e:
+        print(f"Error validating phone number: {e}")
+        return None
 
 @app.route('/send_sms', methods=['POST'])
 def send_sms():
@@ -141,43 +197,456 @@ def send_sms():
         worker_id = data.get('worker_id')
         job_id = data.get('job_id')
         
+        print(f"\n=== Sending SMS ===")
+        print(f"Worker ID: {worker_id}")
+        print(f"Job ID: {job_id}")
+        
         if not worker_id or not job_id:
+            print("Error: Missing worker_id or job_id")
             return jsonify({"error": "worker_id and job_id are required"}), 400
             
         if not twilio_client:
+            print("Error: Twilio client not configured")
             return jsonify({"error": "Twilio client not configured"}), 500
             
         # Get worker and job details
         worker = get_worker_by_id(worker_id)
         job = get_job_by_id(job_id)
         
+        print(f"Worker details: {worker}")
+        print(f"Job details: {job}")
+        
         if not worker:
+            print("Error: Worker not found")
             return jsonify({"error": "Worker not found"}), 404
             
         if not job:
+            print("Error: Job not found")
             return jsonify({"error": "Job not found"}), 404
             
-        # Get worker's phone number
+        # Get worker's phone number and validate it
         phone_number = worker.get('phone')
         if not phone_number:
+            print("Error: Worker phone number not found")
             return jsonify({"error": "Worker phone number not found"}), 404
             
-        # Send SMS notification
-        message = twilio_client.messages.create(
-            body=f"Job Recommendation:\n"
-                 f"Title: {job.get('jobTitle', 'N/A')}\n"
-                 f"Location: {job.get('jobLocation', 'N/A')}\n"
-                 f"Salary: {job.get('salary', 'N/A')}\n"
-                 f"Description: {job.get('jobdescription', 'N/A')}",
-            from_=TWILIO_PHONE_NUMBER,
-            to=phone_number
+        # Validate and format phone number
+        formatted_phone = validate_phone_number(phone_number)
+        if not formatted_phone:
+            print("Error: Invalid phone number format")
+            return jsonify({"error": "Invalid phone number format"}), 400
+            
+        print(f"Original phone number: {phone_number}")
+        print(f"Formatted phone number: {formatted_phone}")
+        
+        # Get job provider details
+        job_provider = job.get('jobProvider', {})
+        provider_phone = job_provider.get('phone', 'N/A')
+            
+        # Format shorter message
+        message_body = (
+            f"NEW JOB\n"
+            f"{job.get('jobTitle', 'N/A')}\n"
+            f"📍{job.get('jobLocation', {}).get('address', 'N/A')}\n"
+            f"💰₹{job.get('salary', 'N/A')}\n"
+            f"📞{provider_phone}\n"
+            f"Reply MORE for details"
         )
         
-        return jsonify({"status": "SMS sent!", "message_sid": message.sid})
+        print(f"Attempting to send message to {formatted_phone}")
+        print(f"Message content: {message_body}")
+            
+        # Send message using Twilio
+        try:
+            message = twilio_client.messages.create(
+                body=message_body,
+                from_=TWILIO_PHONE_NUMBER,
+                to=formatted_phone
+            )
+            print(f"Message sent successfully! SID: {message.sid}")
+            
+            return jsonify({
+                "status": "success",
+                "message": "SMS sent successfully",
+                "message_sid": message.sid,
+                "to": formatted_phone
+            })
+            
+        except Exception as e:
+            error_msg = str(e)
+            error_code = getattr(e, 'code', 'Unknown')
+            more_info = getattr(e, 'more_info', 'No additional info')
+            
+            print(f"Twilio error: {error_msg}")
+            print(f"Error code: {error_code}")
+            print(f"More info: {more_info}")
+            
+            return jsonify({
+                "error": "Failed to send message",
+                "details": error_msg,
+                "code": error_code,
+                "more_info": more_info
+            }), 500
         
     except Exception as e:
-        print(f"SMS error: {e}")
+        print(f"Error in send_sms: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/ussd', methods=['POST'])
+def handle_ussd():
+    """Handle USSD responses from workers"""
+    try:
+        data = request.json
+        phone_number = data.get('From')
+        message_body = data.get('Body', '').strip().upper()
+        
+        if not phone_number or not message_body:
+            return jsonify({"error": "Phone number and message body are required"}), 400
+            
+        # Find worker by phone number
+        worker = None
+        try:
+            response = requests.get(f"{WORKERS_API_URL}")
+            workers = response.json()
+            worker = next((w for w in workers if w.get('phone') == phone_number), None)
+        except Exception as e:
+            print(f"Error finding worker: {e}")
+            
+        if not worker:
+            return jsonify({"error": "Worker not found"}), 404
+            
+        # Handle different USSD commands
+        if message_body == 'APPLY':
+            # Get the latest job notification for this worker
+            # TODO: Implement job application logic
+            return jsonify({
+                "status": "success",
+                "message": "Job application received. We'll contact you shortly."
+            })
+            
+        elif message_body == 'MORE':
+            # Get more details about the job
+            # TODO: Implement job details retrieval
+            return jsonify({
+                "status": "success",
+                "message": "Full job details will be sent shortly."
+            })
+            
+        elif message_body == 'STOP':
+            # Stop notifications for this worker
+            # TODO: Implement notification preferences update
+            return jsonify({
+                "status": "success",
+                "message": "You will no longer receive job notifications. Reply 'START' to resume."
+            })
+            
+        else:
+            return jsonify({
+                "status": "error",
+                "message": "Invalid command. Please use APPLY, MORE, or STOP."
+            })
+            
+    except Exception as e:
+        print(f"USSD handling error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/test_sms', methods=['POST'])
+def test_sms():
+    """Test endpoint to verify SMS sending"""
+    try:
+        data = request.json
+        phone_number = data.get('phone')
+        
+        if not phone_number:
+            return jsonify({"error": "Phone number is required"}), 400
+            
+        if not twilio_client:
+            return jsonify({"error": "Twilio client not initialized"}), 500
+            
+        # Validate and format phone number
+        formatted_phone = validate_phone_number(phone_number)
+        if not formatted_phone:
+            return jsonify({"error": "Invalid phone number format"}), 400
+            
+        # Send test message
+        message = twilio_client.messages.create(
+            body="This is a test message from LabourHub. If you receive this, SMS notifications are working correctly.",
+            from_=TWILIO_PHONE_NUMBER,
+            to=formatted_phone
+        )
+        
+        return jsonify({
+            "message": "Test message sent successfully",
+            "message_sid": message.sid,
+            "to": formatted_phone
+        })
+        
+    except Exception as e:
+        print(f"Test SMS error: {str(e)}")
+        print(f"Error details: {e._dict_}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/notify_workers', methods=['POST'])
+def notify_workers():
+    """Send SMS notifications to workers with matching skills for a new job"""
+    try:
+        data = request.json
+        job_id = data.get('job_id')
+        job_data = data.get('job_data')  # Get the job data that was just saved
+        
+        print("\n=== Starting Worker Notification ===")
+        print(f"Received job_id: {job_id}")
+        
+        if not job_id:
+            print("Error: No job_id provided")
+            return jsonify({"error": "job_id is required"}), 400
+            
+        if not job_data:
+            print("Error: No job data provided")
+            return jsonify({"error": "job_data is required"}), 400
+            
+        # Use the job data directly instead of fetching it
+        new_job = job_data
+        print(f"Using job data: {json.dumps(new_job, indent=2)}")
+        
+        # Get all workers
+        workers_response = requests.get(WORKERS_API_URL)
+        if workers_response.status_code != 200:
+            print("Error fetching workers")
+            return jsonify({"error": "Failed to fetch workers"}), 500
+            
+        workers = workers_response.json()
+        print(f"Found {len(workers)} workers")
+        
+        # Track notification results
+        notified_count = 0
+        errors = []
+        
+        # Check each worker's skills against the new job
+        for worker in workers:
+            try:
+                print(f"\nChecking worker: {worker.get('name')} (ID: {worker.get('_id')})")
+                
+                # Get worker's personal info to access skills
+                personal_info_url = f"http://localhost:3000/personalinfo?userId={worker.get('_id')}"
+                personal_info_response = requests.get(personal_info_url)
+                personal_info_response.raise_for_status()
+                personal_info = personal_info_response.json()
+                
+                # Get skills from personal info
+                worker_skills = []
+                if isinstance(personal_info, list) and len(personal_info) > 0:
+                    worker_skills = personal_info[0].get('skills', [])
+                print(f"Worker skills from personal info: {worker_skills}")
+                
+                # Get job skills and title
+                job_skills = new_job.get('skills', [])
+                job_title = new_job.get('jobTitle', '').lower()
+                
+                # Check for any matching skills or job title match
+                matching_skills = []
+                
+                # Check if any worker skill matches any job skill
+                for worker_skill in worker_skills:
+                    worker_skill_lower = worker_skill.lower()
+                    # Check against job skills
+                    if any(worker_skill_lower in job_skill.lower() or job_skill.lower() in worker_skill_lower 
+                          for job_skill in job_skills):
+                        matching_skills.append(worker_skill)
+                    # Check if job title contains worker skill
+                    if worker_skill_lower in job_title:
+                        matching_skills.append(worker_skill)
+                
+                if matching_skills:
+                    print(f"Found matching skills: {matching_skills}")
+                    
+                    # Get worker's phone number
+                    phone = worker.get('phone')
+                    if not phone:
+                        print(f"Error: No phone number for worker {worker.get('name')}")
+                        errors.append(f"No phone number for worker {worker.get('name')}")
+                        continue
+                    
+                    # Format phone number
+                    formatted_phone = validate_phone_number(phone)
+                    if not formatted_phone:
+                        print(f"Error: Invalid phone number format for worker {worker.get('name')}")
+                        errors.append(f"Invalid phone number format for worker {worker.get('name')}")
+                        continue
+                    
+                    print(f"Formatted phone number: {formatted_phone}")
+                    
+                    # Get job provider details
+                    job_provider = new_job.get('jobProvider', {})
+                    provider_phone = job_provider.get('phone', 'N/A')
+                    
+                    # Create concise message with job details
+                    message_body = (
+                        f"NEW JOB\n"
+                        f"{new_job.get('jobTitle', 'N/A')}\n"
+                        f"📍{new_job.get('jobLocation', {}).get('address', 'N/A')}\n"
+                        f"💰₹{new_job.get('salary', 'N/A')}\n"
+                        f"📞{provider_phone}\n"
+                        f"Reply MORE for details"
+                    )
+                    
+                    print(f"Attempting to send message to {formatted_phone}")
+                    print(f"Message content: {message_body}")
+                    
+                    try:
+                        message = twilio_client.messages.create(
+                            body=message_body,
+                            from_=TWILIO_PHONE_NUMBER,
+                            to=formatted_phone
+                        )
+                        print(f"Message sent successfully! SID: {message.sid}")
+                        notified_count += 1
+                        
+                    except Exception as e:
+                        error_msg = str(e)
+                        error_code = getattr(e, 'code', 'Unknown')
+                        more_info = getattr(e, 'more_info', 'No additional info')
+                        
+                        print(f"Error sending message via Twilio: {error_msg}")
+                        print(f"Twilio error code: {error_code}")
+                        print(f"Twilio more info: {more_info}")
+                        
+                        errors.append(f"Failed to send message to {worker.get('name')}: {error_msg}")
+                else:
+                    print("No matching skills found for this worker")
+                    
+            except Exception as e:
+                print(f"Error processing worker {worker.get('name')}: {str(e)}")
+                errors.append(f"Error processing worker {worker.get('name')}: {str(e)}")
+                continue
+        
+        print(f"\n=== Notification Summary ===")
+        print(f"Successfully notified: {notified_count} workers")
+        if errors:
+            print(f"Errors encountered: {len(errors)}")
+            for error in errors:
+                print(f"- {error}")
+        
+        return jsonify({
+            "success": True,
+            "notified_count": notified_count,
+            "errors": errors
+        })
+        
+    except Exception as e:
+        print(f"Error in notify_workers: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/test_single_sms', methods=['POST'])
+def test_single_sms():
+    """Test endpoint to send a single SMS to verify Twilio configuration"""
+    try:
+        data = request.json
+        phone_number = data.get('phone')
+        
+        print("\n=== Testing Single SMS ===")
+        print(f"Phone number received: {phone_number}")
+        
+        if not phone_number:
+            return jsonify({"error": "Phone number is required"}), 400
+            
+        if not twilio_client:
+            print("Error: Twilio client not initialized")
+            return jsonify({"error": "Twilio client not initialized"}), 500
+            
+        # Validate and format phone number
+        formatted_phone = validate_phone_number(phone_number)
+        if not formatted_phone:
+            print("Error: Invalid phone number format")
+            return jsonify({"error": "Invalid phone number format"}), 400
+            
+        print(f"Formatted phone number: {formatted_phone}")
+        
+        # Simple test message
+        message_body = (
+            "This is a test message from LabourHub.\n"
+            "If you receive this, SMS notifications are working correctly."
+        )
+        
+        print(f"Attempting to send test message to {formatted_phone}")
+        print(f"Message content: {message_body}")
+        
+        try:
+            message = twilio_client.messages.create(
+                body=message_body,
+                from_=TWILIO_PHONE_NUMBER,
+                to=formatted_phone
+            )
+            print(f"Message sent successfully! SID: {message.sid}")
+            return jsonify({
+                "success": True,
+                "message": "Test message sent successfully",
+                "message_sid": message.sid,
+                "to": formatted_phone
+            })
+            
+        except Exception as e:
+            error_msg = str(e)
+            error_code = getattr(e, 'code', 'Unknown')
+            more_info = getattr(e, 'more_info', 'No additional info')
+            
+            print(f"Error sending message via Twilio: {error_msg}")
+            print(f"Twilio error code: {error_code}")
+            print(f"Twilio more info: {more_info}")
+            
+            return jsonify({
+                "success": False,
+                "error": error_msg,
+                "code": error_code,
+                "more_info": more_info
+            }), 500
+            
+    except Exception as e:
+        print(f"Test SMS error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/test_twilio', methods=['GET'])
+def test_twilio():
+    """Test endpoint to verify Twilio configuration"""
+    try:
+        if not twilio_client:
+            return jsonify({
+                "status": "error",
+                "message": "Twilio client not initialized",
+                "config": {
+                    "account_sid_set": bool(TWILIO_ACCOUNT_SID),
+                    "auth_token_set": bool(TWILIO_AUTH_TOKEN),
+                    "phone_number_set": bool(TWILIO_PHONE_NUMBER)
+                }
+            }), 500
+
+        # Test the client by getting account info
+        account = twilio_client.api.accounts(TWILIO_ACCOUNT_SID).fetch()
+        
+        return jsonify({
+            "status": "success",
+            "message": "Twilio configuration is valid",
+            "account": {
+                "friendly_name": account.friendly_name,
+                "status": account.status
+            },
+            "config": {
+                "account_sid_set": bool(TWILIO_ACCOUNT_SID),
+                "auth_token_set": bool(TWILIO_AUTH_TOKEN),
+                "phone_number": TWILIO_PHONE_NUMBER
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e),
+            "config": {
+                "account_sid_set": bool(TWILIO_ACCOUNT_SID),
+                "auth_token_set": bool(TWILIO_AUTH_TOKEN),
+                "phone_number_set": bool(TWILIO_PHONE_NUMBER)
+            }
+        }), 500
 
 if __name__ == '_main_':
     app.run(host='0.0.0.0', port=5000, debug=True)

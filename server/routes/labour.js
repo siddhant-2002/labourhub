@@ -31,6 +31,7 @@ const { translate } = require("../controllers/translator");
 const {
   saveapplicant,
   getapplicantbyjobid,
+  deleteapplicantbyjobid,
 } = require("../controllers/jobhistory");
 
 const { postLocation, getLocation } = require("../controllers/location");
@@ -48,8 +49,9 @@ router.put("/personalinfo", updatePersonalInfoById); // Update user's personal i
 // Job Management Routes
 router.post("/job", postJob); // Create a new job posting
 router.get("/job", getJobById); // Get job details by ID
-// router.put('/job/:id',  editJob); // Edit job details (commented out)
+router.put("/job/:jobId", editJob); // Edit job details
 router.delete("/job", deleteJob); // Delete a job posting
+router.delete("/appliedjob", deleteapplicantbyjobid); // Delete a job posting
 
 // Job Provider Routes
 router.get("/jobs", getJobByProvoiderId); // Get all jobs posted by a provider

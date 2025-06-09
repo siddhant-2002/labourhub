@@ -741,6 +741,7 @@ const WorkerProfile = () => {
 
               {isPopupOpen && selectedJob && (
                 <JobPopup
+                  jobId={selectedJob._id}
                   jobTitle={selectedJob.jobTitle}
                   jobLocation={selectedJob.jobLocation}
                   jobType={selectedJob.jobType}
@@ -748,6 +749,7 @@ const WorkerProfile = () => {
                   skills={selectedJob.skills}
                   salary={selectedJob.salary}
                   onClose={handleClosePopup}
+                  calling={"jobhistory"}
                 />
               )}
             </div>

@@ -1,21 +1,57 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const JobApplied = ({ job, applicant, onClose }) => {
+const JobApplied = ({ job, applicant, onClose, onUpdate, status }) => {
   const navigate = useNavigate();
 
-  // Return null if required data is missing
   if (!job || !applicant) return null;
 
-  console.log("JobApplied applicant:", applicant);
+  const handleApplication = async (status) => {
+    try {
+      const baseUrl = "http://localhost:3000";
 
-  // If applicant is an array, render all applicants
-  const applicantsArray = Array.isArray(applicant) ? applicant : [applicant];
+      if (status === "accepted") {
+        // Update job application status
+        // console.log("applicant", applicant)
+        await axios.put(`${baseUrl}/appliedjob`, {
+          userId: applicant._id,
+          jobId: job._id,
+          jobTitle: job.jobTitle,
+          jobLocation: job.jobLocation?.address || "N/A",
+          salary: job.salary,
+          jobType: job.jobType,
+          jobdescription: job.jobdescription,
+          skills: job.skills,
+        });
+
+        // Update job status
+        await axios.put(`${baseUrl}/job/${job._id}`, {
+          status: "accepted",
+        });
+
+        // await axios.delete(`${baseUrl}/appliedjob?jobId=${job._id}`);
+      } else {
+        // Delete job application
+        
+
+        // Reset job status
+        await axios.put(`${baseUrl}/job?jobId=${job._id}`, {
+          status: "pending",
+        });
+      }
+
+      if (onUpdate) await onUpdate();
+      onClose();
+    } catch (error) {
+      console.error("Error handling job application:", error);
+      // You might want to add a toast notification here
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full relative">
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -23,68 +59,80 @@ const JobApplied = ({ job, applicant, onClose }) => {
           ✖
         </button>
 
-        {/* Job Details Section */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Details</h2>
-        <div className="space-y-2 text-gray-700">
-          <p>
-            <strong>Job Title:</strong> {job.jobTitle}
-          </p>
-          <p>
-            <strong>Location:</strong> {job.jobLocation?.address || "NA"}
-          </p>
-          <p>
-            <strong>Salary:</strong>{" "}
-            <span className="font-semibold text-green-600">₹{job.salary}</span>
-          </p>
-          <p>
-            <strong>Description:</strong> {job.jobdescription}
-          </p>
-        </div>
+        {/* Job Details */}
+        <section className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Details</h2>
+          <div className="space-y-2 text-gray-700">
+            <p>
+              <strong>Job Title:</strong> {job.jobTitle}
+            </p>
+            <p>
+              <strong>Location:</strong> {job.jobLocation?.address || "N/A"}
+            </p>
+            <p>
+              <strong>Salary:</strong>{" "}
+              <span className="font-semibold text-green-600">
+                ₹{job.salary}
+              </span>
+            </p>
+            <p>
+              <strong>Description:</strong> {job.jobdescription}
+            </p>
+            {status && (
+              <p>
+                <strong>Status:</strong>{" "}
+                <span
+                  className={`font-semibold ${
+                    status === "accept" ? "text-green-600" : "text-yellow-600"
+                  }`}
+                >
+                  {status === "accept" ? "Accepted" : "Pending"}
+                </span>
+              </p>
+            )}
+          </div>
+        </section>
 
         <hr className="my-4" />
 
-        {/* Applicant Details Section */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Applicant Details
-        </h2>
-        {applicantsArray.length === 0 ? (
-          <div className="text-gray-500">No applicants yet.</div>
-        ) : (
-          applicantsArray.map((appl, idx) => (
-            <div
-              key={appl._id || idx}
-              className="space-y-2 text-gray-700 mb-4 border-b pb-2"
+        {/* Applicant Details */}
+        <section className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Applicant Details
+          </h2>
+          <div className="space-y-2 text-gray-700">
+            <p>
+              <strong>Name:</strong> {applicant.name || "N/A"}
+            </p>
+            <p>
+              <strong>Mobile Number:</strong> {applicant.phone || "N/A"}
+            </p>
+            <button
+              onClick={() => navigate(`/profile/${applicant._id}`)}
+              className="mt-2 px-4 py-1 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-sm"
             >
-              <p>
-                <strong>Name:</strong> {appl.name || "N/A"}
-              </p>
-              <p>
-                <strong>Mobile Number:</strong> {appl.phone || "N/A"}
-              </p>
-              <div className="flex justify-between items-center mt-2">
-                <button
-                  onClick={() => {
-                    console.log("View Profile clicked for:", appl._id);
-                    navigate(`/profile/${appl._id}`);
-                  }}
-                  className="px-4 py-1 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-sm"
-                >
-                  View Profile
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+              View Profile
+            </button>
+          </div>
+        </section>
 
-        {/* Close Button */}
-        <div className="flex justify-end gap-5 items-center mt-4">
-          <button className="px-5 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-900 transition duration-300">
-            Reject
-          </button>
-          <button className="px-5 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-900 transition duration-300">
-            Accept
-          </button>
-        </div>
+        {/* Action Buttons - Only show if job is not accepted */}
+        {status !== "accept" && (
+          <div className="flex justify-end gap-4 items-center mt-6">
+            <button
+              onClick={() => handleApplication("accepted")}
+              className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300 shadow-md hover:shadow-lg"
+            >
+              Accept
+            </button>
+            <button
+              onClick={() => handleApplication("rejected")}
+              className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 shadow-md hover:shadow-lg"
+            >
+              Reject
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

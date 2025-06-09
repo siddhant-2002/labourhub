@@ -26,12 +26,8 @@ const JobSchema = new mongoose.Schema({
   salary: { type: Number, required: true },
   status: {
     type: String,
-    enum: ["active", "closed", "pending"],
-    default: "active",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+    enum: ["accepted", "complited", "pending"],
+    default: "pending",
   },
 });
 
